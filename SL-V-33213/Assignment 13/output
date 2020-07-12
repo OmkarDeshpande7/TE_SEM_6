@@ -1,0 +1,21 @@
+scarecrow@ubuntu:~/Desktop$ ./a.out
+Enter the number of nodes : 4
+Enter the adjacency matrix : 
+0
+10
+15
+20
+5
+0
+9
+10
+6
+13
+0
+12
+8
+8
+9
+0
+Minimum cost : 39
+Path Taken : 1 2 3 4 1 

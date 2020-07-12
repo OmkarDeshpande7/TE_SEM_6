@@ -1,0 +1,139 @@
+mysql> select day(order_date) from place_order;
++-----------------+
+| day(order_date) |
++-----------------+
+|              18 |
+|              18 |
+|              18 |
+|              18 |
+|              22 |
+|              22 |
++-----------------+
+6 rows in set (0.00 sec)
+
+mysql> select dayofweek(order_date) from place_order;
++-----------------------+
+| dayofweek(order_date) |
++-----------------------+
+|                     5 |
+|                     5 |
+|                     5 |
+|                     5 |
+|                     2 |
+|                     2 |
++-----------------------+
+6 rows in set (0.00 sec)
+
+mysql> select weekday(order_date) from place_order;
++---------------------+
+| weekday(order_date) |
++---------------------+
+|                   3 |
+|                   3 |
+|                   3 |
+|                   3 |
+|                   0 |
+|                   0 |
++---------------------+
+6 rows in set (0.00 sec)
+
+mysql> select dayname(order_date) from place_order;
++---------------------+
+| dayname(order_date) |
++---------------------+
+| Thursday            |
+| Thursday            |
+| Thursday            |
+| Thursday            |
+| Monday              |
+| Monday              |
++---------------------+
+6 rows in set (0.00 sec)
+
+mysql> select monthname(order_date) from place_order;
++-----------------------+
+| monthname(order_date) |
++-----------------------+
+| July                  |
+| July                  |
+| July                  |
+| July                  |
+| July                  |
+| August                |
++-----------------------+
+6 rows in set (0.00 sec)
+
+mysql> select year(order_date) from place_order;
++------------------+
+| year(order_date) |
++------------------+
+|             2019 |
+|             2019 |
+|             2019 |
+|             2019 |
+|             2019 |
+|             2016 |
++------------------+
+6 rows in set (0.00 sec)
+
+mysql> 
+mysql> select current_date();
++----------------+
+| current_date() |
++----------------+
+| 2019-08-07     |
++----------------+
+1 row in set (0.02 sec)
+
+mysql> select current_time();
++----------------+
+| current_time() |
++----------------+
+| 09:11:34       |
++----------------+
+1 row in set (0.00 sec)
+
+mysql> select current_timestamp();
++---------------------+
+| current_timestamp() |
++---------------------+
+| 2019-08-07 09:11:48 |
++---------------------+
+1 row in set (0.00 sec)
+
+mysql> select date_add(o_date,interval 6 month) as After 6 Months;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '6 Months' at line 1
+mysql> select date(o_date,interval 6 month) as After 6 Months;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'interval 6 month) as After 6 Months' at line 1
+mysql> select date(o_date,interval 6 month) as After 6 Months;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'interval 6 month) as After 6 Months' at line 1
+mysql> select date_add(o_date,interval 6 month) as 'After 6 Months' from place_order;
+ERROR 1054 (42S22): Unknown column 'o_date' in 'field list'
+mysql> select date_add(date,interval 6 month) as 'After 6 Months' from place_order;
+ERROR 1054 (42S22): Unknown column 'date' in 'field list'
+mysql> select date_add(order_date,interval 6 month) as 'After 6 Months' from place_order;
++----------------+
+| After 6 Months |
++----------------+
+| 2020-01-18     |
+| 2020-01-18     |
+| 2020-01-18     |
+| 2020-01-18     |
+| 2020-01-22     |
+| 2017-02-22     |
++----------------+
+6 rows in set (0.00 sec)
+
+mysql> select date_add(order_date,interval -6 month) as 'After 6 Months' from place_order;
++----------------+
+| After 6 Months |
++----------------+
+| 2019-01-18     |
+| 2019-01-18     |
+| 2019-01-18     |
+| 2019-01-18     |
+| 2019-01-22     |
+| 2016-02-22     |
++----------------+
+6 rows in set (0.00 sec)
+

@@ -1,0 +1,170 @@
+mllab-02@mllab02:~$ mongo
+MongoDB shell version v4.0.12
+connecting to: mongodb://127.0.0.1:27017/?gssapiServiceName=mongodb
+Implicit session: session { "id" : UUID("b3ac38df-44f7-4445-b884-1543b9745bbe") }
+MongoDB server version: 4.0.12
+Server has startup warnings: 
+2019-09-25T09:04:50.000+0530 I STORAGE  [initandlisten] 
+2019-09-25T09:04:50.000+0530 I STORAGE  [initandlisten] ** WARNING: Using the XFS filesystem is strongly recommended with the WiredTiger storage engine
+2019-09-25T09:04:50.000+0530 I STORAGE  [initandlisten] **          See http://dochub.mongodb.org/core/prodnotes-filesystem
+2019-09-25T09:04:55.703+0530 I CONTROL  [initandlisten] 
+2019-09-25T09:04:55.703+0530 I CONTROL  [initandlisten] ** WARNING: Access control is not enabled for the database.
+2019-09-25T09:04:55.703+0530 I CONTROL  [initandlisten] **          Read and write access to data and configuration is unrestricted.
+2019-09-25T09:04:55.703+0530 I CONTROL  [initandlisten] 
+> db.Employee.aggregate([{$group:{_id:"$department",totalsalary:{$sum:"$salary"}}},{$match:{"totalsalary":{$lt:250000}}}]);
+> use Employee;
+switched to db Employee
+> show tables;
+Employee
+> db.Employee.find().pretty();
+{
+	"_id" : ObjectId("5d8aedf9efd9f2a8cc734073"),
+	"employeeid" : 101,
+	"employeename" : "Piyush",
+	"salary" : 200000,
+	"department" : [
+		{
+			"departmentid" : 111,
+			"departmentname" : "IT"
+		}
+	]
+}
+{
+	"_id" : ObjectId("5d8aee14efd9f2a8cc734074"),
+	"employeeid" : 102,
+	"employeename" : "Ankit",
+	"salary" : 200000,
+	"department" : [
+		{
+			"departmentid" : 112,
+			"departmentname" : "Comp"
+		}
+	]
+}
+{
+	"_id" : ObjectId("5d8aee2eefd9f2a8cc734075"),
+	"employeename" : "Darshan",
+	"salary" : 200000,
+	"department" : [
+		{
+			"departmentid" : 111,
+			"departmentname" : "IT"
+		}
+	]
+}
+{
+	"_id" : ObjectId("5d8aee61efd9f2a8cc734076"),
+	"employeeid" : 104,
+	"employeename" : "Ashwin",
+	"salary" : 200000,
+	"department" : [
+		{
+			"departmentid" : 113,
+			"departmentname" : "EnTC"
+		}
+	]
+}
+> db.Employee.aggregate([{$group:{_id:"$department",totalsalary:{$sum:"$salary"}}},{$match:{"totalsalary":{$lt:250000}}}]);
+{ "_id" : [ { "departmentid" : 113, "departmentname" : "EnTC" } ], "totalsalary" : 200000 }
+{ "_id" : [ { "departmentid" : 112, "departmentname" : "Comp" } ], "totalsalary" : 200000 }
+> db.Employee.aggregate([{$group:{_id:"$department",totalsalary:{$sum:"$salary"}}},{$match:{"totalsalary":{$gt:250000}}}]);
+{ "_id" : [ { "departmentid" : 111, "departmentname" : "IT" } ], "totalsalary" : 400000 }
+> db.Employee.aggregate([{$match:{"salary":{$gt:300000}}},{$group:{_id:"department",totalsalrary:{$sum:"$salary"}}}])
+
+
+			INDEXING
+db.orderMgmt.find().pretty();
+{
+	"_id" : ObjectId("5da1dd29b730ae06444236d4"),
+	"order_id" : 1,
+	"cust_name" : "akash",
+	"order_detail" : [
+		{
+			"prod_name" : "pen",
+			"qty" : 2,
+			"price" : 20
+		},
+		{
+			"prod_name" : "pencil",
+			"qty" : 1,
+			"price" : 10
+		},
+		{
+			"prod_name" : "eraser",
+			"qty" : 5,
+			"price" : 5
+		}
+	],
+	"total_amount" : 0
+}
+{
+	"_id" : ObjectId("5da1dd47b730ae06444236d5"),
+	"order_id" : 2,
+	"cust_name" : "raj",
+	"order_detail" : [
+		{
+			"prod_name" : "book",
+			"qty" : 2,
+			"price" : 20
+		},
+		{
+			"prod_name" : "pencil",
+			"qty" : 1,
+			"price" : 10
+		},
+		{
+			"prod_name" : "eraser",
+			"qty" : 5,
+			"price" : 5
+		}
+	],
+	"total_amount" : 0
+}
+{
+	"_id" : ObjectId("5da1dd7ab730ae06444236d6"),
+	"order_id" : 3,
+	"cust_name" : "swapnil",
+	"order_detail" : [
+		{
+			"prod_name" : "book",
+			"qty" : 2,
+			"price" : 20
+		},
+		{
+			"prod_name" : "pencil",
+			"qty" : 1,
+			"price" : 10
+		}
+	],
+	"total_amount" : 0
+}
+> db.orderMgmt.ensureIndex({"order_id":1});
+{
+	"createdCollectionAutomatically" : false,
+	"numIndexesBefore" : 1,
+	"numIndexesAfter" : 2,
+	"ok" : 1
+}
+> db.orderMgmt.getIndexes();
+[
+	{
+		"v" : 2,
+		"key" : {
+			"_id" : 1
+		},
+		"name" : "_id_",
+		"ns" : "ordermanagement.orderMgmt"
+	},
+	{
+		"v" : 2,
+		"key" : {
+			"order_id" : 1
+		},
+		"name" : "order_id_1",
+		"ns" : "ordermanagement.orderMgmt"
+	}
+]
+> 
+
+
+

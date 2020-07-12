@@ -1,0 +1,548 @@
+> use order33202;
+switched to db order33202
+> show collections;
+invoice
+order
+> db.order.find();
+{ "_id" : ObjectId("5d81b4e5a6352f4ec04287bf"), "custid" : 1, "custname" : "ABC", "productdetails" : [ { "productid" : 101, "orderid" : 1001, "prize" : 300, "productquantity" : 10, "productname" : "Pen" }, { "productid" : 102, "orderid" : 1002, "prize" : 500, "productqunatity" : 10, "productname" : "Notebooks" } ] }
+{ "_id" : ObjectId("5d81b585a6352f4ec04287c0"), "custid" : 2, "custname" : "PQR", "totalprice" : 500 }
+{ "_id" : ObjectId("5d81b585a6352f4ec04287c1"), "custid" : 3, "custname" : "XYZ", "totalprice" : 600 }
+{ "_id" : ObjectId("5d81ba2aa6352f4ec04287c2"), "custid" : 4, "custname" : "A" }
+{ "_id" : ObjectId("5d81ba2aa6352f4ec04287c3"), "custid" : 5, "custname" : "B" }
+{ "_id" : ObjectId("5d81ba2aa6352f4ec04287c4"), "custid" : 6, "custname" : "C" }
+{ "_id" : ObjectId("5d81ba2aa6352f4ec04287c5"), "custid" : 7, "custname" : "D", "totalprice" : 670 }
+{ "_id" : ObjectId("5d81ba2aa6352f4ec04287c6"), "custid" : 8, "custname" : "E" }
+{ "_id" : 1001, "custid" : 1, "custname" : "ABC", "productdetails" : [ { "productid" : 101, "orderid" : 1001, "prize" : 300, "productquantity" : 10, "productname" : "Pen" }, { "productid" : 102, "orderid" : 1002, "prize" : 500, "productqunatity" : 10, "productname" : "Notebooks" } ] }
+{ "_id" : ObjectId("5d81bceaa6352f4ec04287c9"), "custid" : 1, "custname" : "ABC", "productdetails" : [ { "productid" : 101, "orderid" : 1001, "prize" : 300, "productquantity" : 10, "productname" : "Pen" }, { "productid" : 102, "orderid" : 1002, "prize" : 500, "productqunatity" : 10, "productname" : "Notebooks" } ] }
+{ "_id" : ObjectId("5d81bf336b0d1a1abd8bf5e3"), "custid" : 20, "custname" : "JKLM" }
+> db.order.find().pretty();
+{
+	"_id" : ObjectId("5d81b4e5a6352f4ec04287bf"),
+	"custid" : 1,
+	"custname" : "ABC",
+	"productdetails" : [
+		{
+			"productid" : 101,
+			"orderid" : 1001,
+			"prize" : 300,
+			"productquantity" : 10,
+			"productname" : "Pen"
+		},
+		{
+			"productid" : 102,
+			"orderid" : 1002,
+			"prize" : 500,
+			"productqunatity" : 10,
+			"productname" : "Notebooks"
+		}
+	]
+}
+{
+	"_id" : ObjectId("5d81b585a6352f4ec04287c0"),
+	"custid" : 2,
+	"custname" : "PQR",
+	"totalprice" : 500
+}
+{
+	"_id" : ObjectId("5d81b585a6352f4ec04287c1"),
+	"custid" : 3,
+	"custname" : "XYZ",
+	"totalprice" : 600
+}
+{
+	"_id" : ObjectId("5d81ba2aa6352f4ec04287c2"),
+	"custid" : 4,
+	"custname" : "A"
+}
+{
+	"_id" : ObjectId("5d81ba2aa6352f4ec04287c3"),
+	"custid" : 5,
+	"custname" : "B"
+}
+{
+	"_id" : ObjectId("5d81ba2aa6352f4ec04287c4"),
+	"custid" : 6,
+	"custname" : "C"
+}
+{
+	"_id" : ObjectId("5d81ba2aa6352f4ec04287c5"),
+	"custid" : 7,
+	"custname" : "D",
+	"totalprice" : 670
+}
+{
+	"_id" : ObjectId("5d81ba2aa6352f4ec04287c6"),
+	"custid" : 8,
+	"custname" : "E"
+}
+{
+	"_id" : 1001,
+	"custid" : 1,
+	"custname" : "ABC",
+	"productdetails" : [
+		{
+			"productid" : 101,
+			"orderid" : 1001,
+			"prize" : 300,
+			"productquantity" : 10,
+			"productname" : "Pen"
+		},
+		{
+			"productid" : 102,
+			"orderid" : 1002,
+			"prize" : 500,
+			"productqunatity" : 10,
+			"productname" : "Notebooks"
+		}
+	]
+}
+{
+	"_id" : ObjectId("5d81bceaa6352f4ec04287c9"),
+	"custid" : 1,
+	"custname" : "ABC",
+	"productdetails" : [
+		{
+			"productid" : 101,
+			"orderid" : 1001,
+			"prize" : 300,
+			"productquantity" : 10,
+			"productname" : "Pen"
+		},
+		{
+			"productid" : 102,
+			"orderid" : 1002,
+			"prize" : 500,
+			"productqunatity" : 10,
+			"productname" : "Notebooks"
+		}
+	]
+}
+{
+	"_id" : ObjectId("5d81bf336b0d1a1abd8bf5e3"),
+	"custid" : 20,
+	"custname" : "JKLM"
+}
+> db.order.update({"_id":ObjectId("5d81b585a6352f4ec04287c0")},{$unset:{totalprice}});
+2019-09-21T11:25:50.320+0530 E QUERY    [js] ReferenceError: totalprice is not defined :
+@(shell):1:71
+> db.order.update({"_id":ObjectId("5d81b585a6352f4ec04287c0")},{$unset:{totalprice:500}});
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.order.find().pretty();
+{
+	"_id" : ObjectId("5d81b4e5a6352f4ec04287bf"),
+	"custid" : 1,
+	"custname" : "ABC",
+	"productdetails" : [
+		{
+			"productid" : 101,
+			"orderid" : 1001,
+			"prize" : 300,
+			"productquantity" : 10,
+			"productname" : "Pen"
+		},
+		{
+			"productid" : 102,
+			"orderid" : 1002,
+			"prize" : 500,
+			"productqunatity" : 10,
+			"productname" : "Notebooks"
+		}
+	]
+}
+{
+	"_id" : ObjectId("5d81b585a6352f4ec04287c0"),
+	"custid" : 2,
+	"custname" : "PQR"
+}
+{
+	"_id" : ObjectId("5d81b585a6352f4ec04287c1"),
+	"custid" : 3,
+	"custname" : "XYZ",
+	"totalprice" : 600
+}
+{
+	"_id" : ObjectId("5d81ba2aa6352f4ec04287c2"),
+	"custid" : 4,
+	"custname" : "A"
+}
+{
+	"_id" : ObjectId("5d81ba2aa6352f4ec04287c3"),
+	"custid" : 5,
+	"custname" : "B"
+}
+{
+	"_id" : ObjectId("5d81ba2aa6352f4ec04287c4"),
+	"custid" : 6,
+	"custname" : "C"
+}
+{
+	"_id" : ObjectId("5d81ba2aa6352f4ec04287c5"),
+	"custid" : 7,
+	"custname" : "D",
+	"totalprice" : 670
+}
+{
+	"_id" : ObjectId("5d81ba2aa6352f4ec04287c6"),
+	"custid" : 8,
+	"custname" : "E"
+}
+{
+	"_id" : 1001,
+	"custid" : 1,
+	"custname" : "ABC",
+	"productdetails" : [
+		{
+			"productid" : 101,
+			"orderid" : 1001,
+			"prize" : 300,
+			"productquantity" : 10,
+			"productname" : "Pen"
+		},
+		{
+			"productid" : 102,
+			"orderid" : 1002,
+			"prize" : 500,
+			"productqunatity" : 10,
+			"productname" : "Notebooks"
+		}
+	]
+}
+{
+	"_id" : ObjectId("5d81bceaa6352f4ec04287c9"),
+	"custid" : 1,
+	"custname" : "ABC",
+	"productdetails" : [
+		{
+			"productid" : 101,
+			"orderid" : 1001,
+			"prize" : 300,
+			"productquantity" : 10,
+			"productname" : "Pen"
+		},
+		{
+			"productid" : 102,
+			"orderid" : 1002,
+			"prize" : 500,
+			"productqunatity" : 10,
+			"productname" : "Notebooks"
+		}
+	]
+}
+{
+	"_id" : ObjectId("5d81bf336b0d1a1abd8bf5e3"),
+	"custid" : 20,
+	"custname" : "JKLM"
+}
+> db.order.replace({"custid" : 8},{"$custname:Elvin"});
+2019-09-21T11:30:01.602+0530 E QUERY    [js] SyntaxError: missing : after property id @(shell):1:50
+> db.order.replace({"custid" : 8},{"$custname":"Elvin"});
+2019-09-21T11:30:32.549+0530 E QUERY    [js] TypeError: db.order.replace is not a function :
+@(shell):1:1
+> db.order.replaceone({"custid" : 8},{"$custname":"Elvin"});
+2019-09-21T11:30:41.078+0530 E QUERY    [js] TypeError: db.order.replaceone is not a function :
+@(shell):1:1
+> db.order.replaceOne({"custid" : 8},{"$custname":"Elvin"});
+2019-09-21T11:30:59.094+0530 E QUERY    [js] Error: the replace operation document must not contain atomic operators :
+DBCollection.prototype.replaceOne@src/mongo/shell/crud_api.js:463:1
+@(shell):1:1
+> db.order.replaceone({"custid" : 8},{"$custname":{"Elvin"}});
+2019-09-21T11:31:51.329+0530 E QUERY    [js] SyntaxError: missing : after property id @(shell):1:56
+> db.order.replaceone({custid : 8},{"$custname":"Elvin"});
+2019-09-21T11:32:24.354+0530 E QUERY    [js] TypeError: db.order.replaceone is not a function :
+@(shell):1:1
+> db.order.replaceOne({custid : 8},{"$custname":"Elvin"});
+2019-09-21T11:32:31.954+0530 E QUERY    [js] Error: the replace operation document must not contain atomic operators :
+DBCollection.prototype.replaceOne@src/mongo/shell/crud_api.js:463:1
+@(shell):1:1
+> db.order.replaceOne({custid : 8},{custid:8,"$custname":"Elvin"});
+2019-09-21T11:42:36.827+0530 E QUERY    [js] WriteError: The dollar ($) prefixed field '$custname' in '$custname' is not valid for storage. :
+WriteError({
+	"index" : 0,
+	"code" : 52,
+	"errmsg" : "The dollar ($) prefixed field '$custname' in '$custname' is not valid for storage.",
+	"op" : {
+		"q" : {
+			"custid" : 8
+		},
+		"u" : {
+			"custid" : 8,
+			"$custname" : "Elvin"
+		},
+		"multi" : false,
+		"upsert" : false
+	}
+})
+WriteError@src/mongo/shell/bulk_api.js:461:48
+Bulk/mergeBatchResults@src/mongo/shell/bulk_api.js:841:49
+Bulk/executeBatch@src/mongo/shell/bulk_api.js:906:13
+Bulk/this.execute@src/mongo/shell/bulk_api.js:1150:21
+DBCollection.prototype.replaceOne@src/mongo/shell/crud_api.js:489:17
+@(shell):1:1
+> db.order.replaceOne({custid : 8},{custid:8,"custname":"Elvin"});
+{ "acknowledged" : true, "matchedCount" : 1, "modifiedCount" : 1 }
+> db.order.find().pretty();
+{
+	"_id" : ObjectId("5d81b4e5a6352f4ec04287bf"),
+	"custid" : 1,
+	"custname" : "ABC",
+	"productdetails" : [
+		{
+			"productid" : 101,
+			"orderid" : 1001,
+			"prize" : 300,
+			"productquantity" : 10,
+			"productname" : "Pen"
+		},
+		{
+			"productid" : 102,
+			"orderid" : 1002,
+			"prize" : 500,
+			"productqunatity" : 10,
+			"productname" : "Notebooks"
+		}
+	]
+}
+{
+	"_id" : ObjectId("5d81b585a6352f4ec04287c0"),
+	"custid" : 2,
+	"custname" : "PQR"
+}
+{
+	"_id" : ObjectId("5d81b585a6352f4ec04287c1"),
+	"custid" : 3,
+	"custname" : "XYZ",
+	"totalprice" : 600
+}
+{
+	"_id" : ObjectId("5d81ba2aa6352f4ec04287c2"),
+	"custid" : 4,
+	"custname" : "A"
+}
+{
+	"_id" : ObjectId("5d81ba2aa6352f4ec04287c3"),
+	"custid" : 5,
+	"custname" : "B"
+}
+{
+	"_id" : ObjectId("5d81ba2aa6352f4ec04287c4"),
+	"custid" : 6,
+	"custname" : "C"
+}
+{
+	"_id" : ObjectId("5d81ba2aa6352f4ec04287c5"),
+	"custid" : 7,
+	"custname" : "D",
+	"totalprice" : 670
+}
+{
+	"_id" : ObjectId("5d81ba2aa6352f4ec04287c6"),
+	"custid" : 8,
+	"custname" : "Elvin"
+}
+{
+	"_id" : 1001,
+	"custid" : 1,
+	"custname" : "ABC",
+	"productdetails" : [
+		{
+			"productid" : 101,
+			"orderid" : 1001,
+			"prize" : 300,
+			"productquantity" : 10,
+			"productname" : "Pen"
+		},
+		{
+			"productid" : 102,
+			"orderid" : 1002,
+			"prize" : 500,
+			"productqunatity" : 10,
+			"productname" : "Notebooks"
+		}
+	]
+}
+{
+	"_id" : ObjectId("5d81bceaa6352f4ec04287c9"),
+	"custid" : 1,
+	"custname" : "ABC",
+	"productdetails" : [
+		{
+			"productid" : 101,
+			"orderid" : 1001,
+			"prize" : 300,
+			"productquantity" : 10,
+			"productname" : "Pen"
+		},
+		{
+			"productid" : 102,
+			"orderid" : 1002,
+			"prize" : 500,
+			"productqunatity" : 10,
+			"productname" : "Notebooks"
+		}
+	]
+}
+{
+	"_id" : ObjectId("5d81bf336b0d1a1abd8bf5e3"),
+	"custid" : 20,
+	"custname" : "JKLM"
+}
+> db.order.remove({"_id" : ObjectId("5d81b585a6352f4ec04287c0")});
+WriteResult({ "nRemoved" : 1 })
+> db.order.remove({"_id" : ObjectId("5d81b585a6352f4ec04287c1")});
+WriteResult({ "nRemoved" : 1 })
+> db.order.remove({"_id" : ObjectId("5d81ba2aa6352f4ec04287c2")});
+WriteResult({ "nRemoved" : 1 })
+> db.order.remove({"_id" : ObjectId("5d81ba2aa6352f4ec04287c3")});
+WriteResult({ "nRemoved" : 1 })
+> db.order.remove({"_id" : ObjectId("5d81ba2aa6352f4ec04287c4")});
+WriteResult({ "nRemoved" : 1 })
+> db.order.remove({"_id" : ObjectId("5d81ba2aa6352f4ec04287c5")});
+WriteResult({ "nRemoved" : 1 })
+> db.order.remove({"_id" : ObjectId("5d81ba2aa6352f4ec04287c6")});
+WriteResult({ "nRemoved" : 1 })
+> db.order.find().pretty();
+{
+	"_id" : ObjectId("5d81b4e5a6352f4ec04287bf"),
+	"custid" : 1,
+	"custname" : "ABC",
+	"productdetails" : [
+		{
+			"productid" : 101,
+			"orderid" : 1001,
+			"prize" : 300,
+			"productquantity" : 10,
+			"productname" : "Pen"
+		},
+		{
+			"productid" : 102,
+			"orderid" : 1002,
+			"prize" : 500,
+			"productqunatity" : 10,
+			"productname" : "Notebooks"
+		}
+	]
+}
+{
+	"_id" : 1001,
+	"custid" : 1,
+	"custname" : "ABC",
+	"productdetails" : [
+		{
+			"productid" : 101,
+			"orderid" : 1001,
+			"prize" : 300,
+			"productquantity" : 10,
+			"productname" : "Pen"
+		},
+		{
+			"productid" : 102,
+			"orderid" : 1002,
+			"prize" : 500,
+			"productqunatity" : 10,
+			"productname" : "Notebooks"
+		}
+	]
+}
+{
+	"_id" : ObjectId("5d81bceaa6352f4ec04287c9"),
+	"custid" : 1,
+	"custname" : "ABC",
+	"productdetails" : [
+		{
+			"productid" : 101,
+			"orderid" : 1001,
+			"prize" : 300,
+			"productquantity" : 10,
+			"productname" : "Pen"
+		},
+		{
+			"productid" : 102,
+			"orderid" : 1002,
+			"prize" : 500,
+			"productqunatity" : 10,
+			"productname" : "Notebooks"
+		}
+	]
+}
+{
+	"_id" : ObjectId("5d81bf336b0d1a1abd8bf5e3"),
+	"custid" : 20,
+	"custname" : "JKLM"
+}
+> db.order.update([{{"_id" : ObjectId("5d81bceaa6352f4ec04287c9")},{$set:{custid:2}}},{{"_id" : 1001},{$set:{custid:3}}}]);
+2019-09-21T11:52:52.570+0530 E QUERY    [js] SyntaxError: invalid property id @(shell):1:18
+> db.order.update({"_id" : 1001},{$set:{custid:2}});
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.order.update({"_id" : ObjectId("5d81bceaa6352f4ec04287c9")},{$set:{custid:3}});
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.order.find().pretty();
+{
+	"_id" : ObjectId("5d81b4e5a6352f4ec04287bf"),
+	"custid" : 1,
+	"custname" : "ABC",
+	"productdetails" : [
+		{
+			"productid" : 101,
+			"orderid" : 1001,
+			"prize" : 300,
+			"productquantity" : 10,
+			"productname" : "Pen"
+		},
+		{
+			"productid" : 102,
+			"orderid" : 1002,
+			"prize" : 500,
+			"productqunatity" : 10,
+			"productname" : "Notebooks"
+		}
+	]
+}
+{
+	"_id" : 1001,
+	"custid" : 2,
+	"custname" : "ABC",
+	"productdetails" : [
+		{
+			"productid" : 101,
+			"orderid" : 1001,
+			"prize" : 300,
+			"productquantity" : 10,
+			"productname" : "Pen"
+		},
+		{
+			"productid" : 102,
+			"orderid" : 1002,
+			"prize" : 500,
+			"productqunatity" : 10,
+			"productname" : "Notebooks"
+		}
+	]
+}
+{
+	"_id" : ObjectId("5d81bceaa6352f4ec04287c9"),
+	"custid" : 3,
+	"custname" : "ABC",
+	"productdetails" : [
+		{
+			"productid" : 101,
+			"orderid" : 1001,
+			"prize" : 300,
+			"productquantity" : 10,
+			"productname" : "Pen"
+		},
+		{
+			"productid" : 102,
+			"orderid" : 1002,
+			"prize" : 500,
+			"productqunatity" : 10,
+			"productname" : "Notebooks"
+		}
+	]
+}
+{
+	"_id" : ObjectId("5d81bf336b0d1a1abd8bf5e3"),
+	"custid" : 20,
+	"custname" : "JKLM"
+}
+> 
+

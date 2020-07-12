@@ -1,0 +1,9 @@
+scarecrow@ubuntu:~/Desktop/TE_SEM_6/SL-V-33213/Assignment 9$ ./a.out
+Enter the string : int a,b,c;
+String Accepted !scarecrow@ubuntu:~/Desktop/TE_SEM_6/SL-V-33213/Assignment 9$ ./a.out
+Enter the string : char abc, lkj;
+String Accepted !scarecrow@ubuntu:~/Desktop/TE_SEM_6/SL-V-33213/Assignment 9$ ./a.out
+Enter the string : char ;
+String Accepted !scarecrow@ubuntu:~/Desktop/TE_SEM_6/SL-V-33213/Assignment 9$ ./a.out
+Enter the string : char abc,:
+String Rejected !

@@ -1,0 +1,65 @@
+scarecrow@ubuntu:~/Desktop/TE_SEM_6/SL-V-33213/Assignment 8$ ./a.out
+ENTER NUMBER OF NODES : 5
+
+ENTER THE STARTING NODE : 1
+
+ENTER NUMBER OF EDGES : 8
+
+GIVE EDGE WEIGHTS : 
+
+	Enter starting node	: 1
+	Enter ending node	: 2
+	Enter weight of edge	: -1
+
+	Enter starting node	: 1
+	Enter ending node	: 3
+	Enter weight of edge	: 4
+
+	Enter starting node	: 2
+	Enter ending node	: 3
+	Enter weight of edge	: 3
+
+	Enter starting node	: 2
+	Enter ending node	: 4
+	Enter weight of edge	: 2
+
+	Enter starting node	: 2
+	Enter ending node	: 5
+	Enter weight of edge	: 2
+
+	Enter starting node	: 4
+	Enter ending node	: 2
+	Enter weight of edge	: 1
+
+	Enter starting node	: 5
+	Enter ending node	: 4
+	Enter weight of edge	: -3
+
+	Enter starting node	: 4
+	Enter ending node	: 3
+	Enter weight of edge	: 5
+Distance : 0 -1 32767 32767 32767 
+Previous : 0 0 -1 -1 -1 
+
+Distance : 0 -1 4 32767 32767 
+Previous : 0 0 0 -1 -1 
+
+Distance : 0 -1 2 32767 32767 
+Previous : 0 0 1 -1 -1 
+
+Distance : 0 -1 2 1 32767 
+Previous : 0 0 1 1 -1 
+
+Distance : 0 -1 2 1 1 
+Previous : 0 0 1 1 1 
+
+Distance : 0 -1 2 -2 1 
+Previous : 0 0 1 4 1 
+
+PATH FOR NODE 1 : <-1<-0
+PATH FOR NODE 2 : <-2<-1<-0
+PATH FOR NODE 3 : <-3<-4<-1<-0
+PATH FOR NODE 4 : <-4<-1<-0
+Distance : 0 -1 2 -2 1 
+Previous : 0 0 1 4 1 
+

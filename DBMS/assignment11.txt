@@ -1,0 +1,237 @@
+mysql> use student;
+Database changed
+mysql> create table studentinformation(sid varchar(30),sname varchar(50),saddress varchar(50),mobile varchar(10),college varchar(50));
+Query OK, 0 rows affected (0.43 sec)
+
+mysql> alter table studentinformation add primary key(sid);
+Query OK, 0 rows affected (0.47 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> desc studentdetails;
+ERROR 1146 (42S02): Table 'student.studentdetails' doesn't exist
+mysql> desc studentdetails;
+ERROR 1146 (42S02): Table 'student.studentdetails' doesn't exist
+mysql> desc studentinformation;
++----------+-------------+------+-----+---------+-------+
+| Field    | Type        | Null | Key | Default | Extra |
++----------+-------------+------+-----+---------+-------+
+| sid      | varchar(30) | NO   | PRI | NULL    |       |
+| sname    | varchar(50) | YES  |     | NULL    |       |
+| saddress | varchar(50) | YES  |     | NULL    |       |
+| mobile   | varchar(10) | YES  |     | NULL    |       |
+| college  | varchar(50) | YES  |     | NULL    |       |
++----------+-------------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+
+mysql> insert into studentinformation values('I2K12345','John','LOS ANGELES','1234567891','IITM');
+Query OK, 1 row affected (0.33 sec)
+
+mysql> insert into studentinformation values('I2K76544','Dravid','Mumbai','1286267891','IITB');
+Query OK, 1 row affected (0.05 sec)
+
+mysql> insert into studentinformation values('I2K79844','Ravindra','Delhi','1287645891','IITD');
+Query OK, 1 row affected (0.31 sec)
+
+mysql> select * from studentinformation;
++----------+----------+-------------+------------+---------+
+| sid      | sname    | saddress    | mobile     | college |
++----------+----------+-------------+------------+---------+
+| I2K12345 | John     | LOS ANGELES | 1234567891 | IITM    |
+| I2K76544 | Dravid   | Mumbai      | 1286267891 | IITB    |
+| I2K79844 | Ravindra | Delhi       | 1287645891 | IITD    |
++----------+----------+-------------+------------+---------+
+3 rows in set (0.00 sec)
+
+mysql> set @sid=select sid from studentinformation limit 1;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'select sid from studentinformation limit 1' at line 1
+mysql> set @sid='I2K12345';
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> source student.sql;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'delimiter//create procedure proc(in sid int)
+begin
+declare int id' at line 1
+ERROR 1054 (42S22): Unknown column 'id' in 'where clause'
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'end' at line 1
+mysql> source student.sql;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'delimiter//create procedure proc(in sid int)
+begin
+declare int id' at line 1
+ERROR 1054 (42S22): Unknown column 'id' in 'where clause'
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'end' at line 1
+mysql> source student.sql;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'delimiter//create procedure proc(in id int)
+begin
+
+
+select * from studentinforma' at line 1
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'end//
+delimiter' at line 1
+mysql> source student.sql;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'delimiter//create procedure proc(in id varchar(20))
+begin
+
+
+select * from studen' at line 1
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'end//
+delimiter' at line 1
+mysql> source student.sql;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'delimiter//create procedure proc(in id varchar(20))
+begin
+
+
+select * from studen' at line 1
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'end' at line 1
+mysql> source student.sql;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'delimiter//create procedure proc1(in id varchar(20))
+begin
+  select * from stude' at line 1
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'end' at line 1
+mysql> source student.sql;
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> call proc1(@sid);
+    -> //
++----------+-------+-------------+------------+---------+
+| sid      | sname | saddress    | mobile     | college |
++----------+-------+-------------+------------+---------+
+| I2K12345 | John  | LOS ANGELES | 1234567891 | IITM    |
++----------+-------+-------------+------------+---------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> delimiter;
+    -> //
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'delimiter' at line 1
+mysql> drop proc1;
+    -> //
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'proc1' at line 1
+mysql> drop procedure proc1//
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> source student.sql;
+ERROR: 
+Failed to open file 'student.sql;', error: 2
+mysql> source student.sql//
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'delimiter' at line 5
+mysql> source student.sql//
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> call proc1(@sid);
+    -> //
++----------+-------+-------------+------------+---------+
+| sid      | sname | saddress    | mobile     | college |
++----------+-------+-------------+------------+---------+
+| I2K12345 | John  | LOS ANGELES | 1234567891 | IITM    |
++----------+-------+-------------+------------+---------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> delimiter ;
+mysql> select * from studentinformation;
++----------+----------+-------------+------------+---------+
+| sid      | sname    | saddress    | mobile     | college |
++----------+----------+-------------+------------+---------+
+| I2K12345 | John     | LOS ANGELES | 1234567891 | IITM    |
+| I2K76544 | Dravid   | Mumbai      | 1286267891 | IITB    |
+| I2K79844 | Ravindra | Delhi       | 1287645891 | IITD    |
++----------+----------+-------------+------------+---------+
+3 rows in set (0.00 sec)
+
+mysql> source studentfunction.sql
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'select * from studentinformation where sid=id' at line 3
+mysql> source studentfunction.sql
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'select sname from studentinformation where sid=id' at line 3
+mysql> source studentfunction.sql
+ERROR 1415 (0A000): Not allowed to return a result set from a function
+mysql> create view v1 as select * from studentinformation;
+    -> //
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> delimiter ;
+mysql> select * from v1;
++----------+----------+-------------+------------+---------+
+| sid      | sname    | saddress    | mobile     | college |
++----------+----------+-------------+------------+---------+
+| I2K12345 | John     | LOS ANGELES | 1234567891 | IITM    |
+| I2K76544 | Dravid   | Mumbai      | 1286267891 | IITB    |
+| I2K79844 | Ravindra | Delhi       | 1287645891 | IITD    |
++----------+----------+-------------+------------+---------+
+3 rows in set (0.00 sec)
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| MyNewDatabase      |
+| db                 |
+| miniproject        |
+| mysql              |
+| performance_schema |
+| product_purchase   |
+| stationary         |
+| student            |
+| sys                |
+| test               |
++--------------------+
+11 rows in set (0.09 sec)
+
+mysql> use student;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+mysql> show tables;
++--------------------+
+| Tables_in_student  |
++--------------------+
+| grades             |
+| studentinformation |
+| v1                 |
++--------------------+
+3 rows in set (0.00 sec)
+
+mysql> select * from v1;
++----------+----------+-------------+------------+---------+
+| sid      | sname    | saddress    | mobile     | college |
++----------+----------+-------------+------------+---------+
+| I2K12345 | John     | LOS ANGELES | 1234567891 | IITM    |
+| I2K76544 | Dravid   | Mumbai      | 1286267891 | IITB    |
+| I2K79844 | Ravindra | Delhi       | 1287645891 | IITD    |
++----------+----------+-------------+------------+---------+
+3 rows in set (0.00 sec)
+
+mysql> select * from studentinformation;
++----------+----------+-------------+------------+---------+
+| sid      | sname    | saddress    | mobile     | college |
++----------+----------+-------------+------------+---------+
+| I2K12345 | John     | LOS ANGELES | 1234567891 | IITM    |
+| I2K76544 | Dravid   | Mumbai      | 1286267891 | IITB    |
+| I2K79844 | Ravindra | Delhi       | 1287645891 | IITD    |
++----------+----------+-------------+------------+---------+
+3 rows in set (0.00 sec)
+
+mysql> select * from grades;
++-------------+----------+
+| gradescored | sid      |
++-------------+----------+
+| A           | I2K12345 |
++-------------+----------+
+1 row in set (0.00 sec)
+
+mysql> create view v2 as select s.sid,s.sname,s.mobile,g.gradescored from studentinformation s inner join grades g on s.sid=g.gid;
+ERROR 1054 (42S22): Unknown column 'g.gid' in 'on clause'
+mysql> create view v2 as select s.sid,s.sname,s.mobile,g.gradescored from studentinformation s inner join grades g on s.sid=g.sid;
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> select * from v2;
++----------+-------+------------+-------------+
+| sid      | sname | mobile     | gradescored |
++----------+-------+------------+-------------+
+| I2K12345 | John  | 1234567891 | A           |
++----------+-------+------------+-------------+
+1 row in set (0.03 sec)
+
+

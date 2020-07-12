@@ -1,0 +1,414 @@
+########################################################################################
+
+Author - Omkar Deshpande (K10 - 33213)
+
+Problem Statement - Write an application using HBase and HiveQL for flight information system which will include 
+    1) Creating, Dropping, and altering Database tables 
+    2) Creating an external Hive table to connect to the HBase for Customer Information Table 
+    3) Load table with data, insert new values and field in the table, Join tables with Hive 
+    4) Create index on Flight information Table
+    5) Find the average departure delay per day in 2008. 
+
+Part 1 - Employee Database and hive external table
+
+########################################################################################
+######################## HBase ##########################
+
+hduser@DBMSLAB-A3-305-09:~$ hbase shell
+2020-02-04 13:27:15,723 WARN  [main] util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+SLF4J: Class path contains multiple SLF4J bindings.
+SLF4J: Found binding in [jar:file:/usr/local/hbase/lib/slf4j-log4j12-1.7.5.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: Found binding in [jar:file:/usr/local/hadoop/share/hadoop/common/lib/slf4j-log4j12-1.7.10.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: See http://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J: Actual binding is of type [org.slf4j.impl.Log4jLoggerFactory]
+HBase Shell; enter 'help<RETURN>' for list of supported commands.
+Type "exit<RETURN>" to leave the HBase Shell
+Version 1.2.6, rUnknown, Mon May 29 02:25:32 CDT 2017
+
+hbase(main):001:0> scan 'sts'
+ROW                   COLUMN+CELL                                               
+ 33201                column=name:fname, timestamp=1579594833198, value=aditi   
+ 33201                column=name:lname, timestamp=1579594841321, value=badhe   
+ 33201                column=per:FE, timestamp=1580802743902, value=90          
+ 33202                column=name:fname, timestamp=1579595091070, value=piyush  
+ 33202                column=name:lname, timestamp=1579595100030, value=agrawal 
+ 33212                column=name:fname, timestamp=1579594776426, value=shubham 
+ 33212                column=name:lname, timestamp=1579594784878, value=darak   
+3 row(s) in 0.1460 seconds
+
+hbase(main):002:0> put 'sts',33201,'per:SE',52
+0 row(s) in 0.0320 seconds
+
+hbase(main):003:0> put 'sts',33202,'per:SE',87
+0 row(s) in 0.0230 seconds
+
+hbase(main):004:0> put 'sts',33212,'per:SE',68
+0 row(s) in 0.0060 seconds
+
+hbase(main):005:0> put 'sts',33202,'per:FE',72
+0 row(s) in 0.0060 seconds
+
+hbase(main):006:0> put 'sts',33212,'per:FE',54
+0 row(s) in 0.0040 seconds
+
+hbase(main):007:0> scan 'sts'
+ROW                   COLUMN+CELL                                               
+ 33201                column=name:fname, timestamp=1579594833198, value=aditi   
+ 33201                column=name:lname, timestamp=1579594841321, value=badhe   
+ 33201                column=per:FE, timestamp=1580802743902, value=90          
+ 33201                column=per:SE, timestamp=1580803403831, value=52          
+ 33202                column=name:fname, timestamp=1579595091070, value=piyush  
+ 33202                column=name:lname, timestamp=1579595100030, value=agrawal 
+ 33202                column=per:FE, timestamp=1580803452595, value=72          
+ 33202                column=per:SE, timestamp=1580803411842, value=87          
+ 33212                column=name:fname, timestamp=1579594776426, value=shubham 
+ 33212                column=name:lname, timestamp=1579594784878, value=darak   
+ 33212                column=per:FE, timestamp=1580803462304, value=54          
+ 33212                column=per:SE, timestamp=1580803440341, value=68          
+3 row(s) in 0.0140 seconds
+
+hbase(main):008:0> put 'sts',33213,'per:FE',85
+0 row(s) in 0.0060 seconds
+
+hbase(main):009:0> put 'sts',33213,'per:SE',65
+0 row(s) in 0.0050 seconds
+
+hbase(main):010:0> put 'sts',33213,'name:fname','omkar'
+0 row(s) in 0.0030 seconds
+
+hbase(main):011:0> put 'sts',33213,'name:lname','deshpande'
+0 row(s) in 0.0020 seconds
+
+hbase(main):012:0> list
+TABLE                                                                           
+EmpHive                                                                         
+Rflight                                                                         
+Student_table                                                                   
+custhive                                                                        
+emphive                                                                         
+emphive33130                                                                    
+flight                                                                          
+flight33130                                                                     
+flightbooking                                                                   
+lone                                                                            
+sts                                                                             
+student                                                                         
+student_info                                                                    
+13 row(s) in 0.0460 seconds
+
+=> ["EmpHive", "Rflight", "Student_table", "custhive", "emphive", "emphive33130", "flight", "flight33130", "flightbooking", "lone", "sts", "student", "student_info"]
+hbase(main):014:0> create 'emp_hive','name','salary'
+0 row(s) in 2.4080 seconds
+
+=> Hbase::Table - emp_hive
+hbase(main):015:0> CREATE external TABLE hive_emp(id int, name string, esal string)
+SyntaxError: (hbase):15: syntax error, unexpected tIDENTIFIER
+
+CREATE external TABLE hive_emp(id int, name string, esal string)
+                                                 ^
+
+hbase(main):016:0> STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'
+NoMethodError: undefined method `BY' for #<Object:0x193bb809>
+
+hbase(main):017:0> WITH SERDEPROPERTIES ("hbase.columns.mapping" = ":key,name:name,salary:esal")
+(hbase):17 warning: don't put space before argument parentheses
+SyntaxError: (hbase):17: syntax error, unexpected '='
+
+WITH SERDEPROPERTIES ("hbase.columns.mapping" = ":key,name:name,salary:esal")
+                                              ^
+
+hbase(main):018:0> TBLPROPERTIES ("hbase.table.name" = "emp_hive");
+hbase(main):019:0* scan emp_hive;
+hbase(main):020:0* scan emp_hive
+SyntaxError: (hbase):18: syntax error, unexpected '='
+
+TBLPROPERTIES ("hbase.table.name" = "emp_hive");
+                                  ^
+
+hbase(main):021:0> scan emp_hive
+NameError: undefined local variable or method `emp_hive' for #<Object:0x193bb809>
+
+hbase(main):022:0> scan 'emp_hive'
+ROW                   COLUMN+CELL                                               
+ 1                    column=name:name, timestamp=1580804691970, value=akshay   
+ 1                    column=salary:esal, timestamp=1580804691970, value=25000  
+ 2                    column=name:name, timestamp=1580804691970, value=omkar    
+ 2                    column=salary:esal, timestamp=1580804691970, value=50000  
+ 3                    column=name:name, timestamp=1580804691970, value=jay      
+ 3                    column=salary:esal, timestamp=1580804691970, value=60000  
+ 4                    column=name:name, timestamp=1580804691970, value=unique   
+ 4                    column=salary:esal, timestamp=1580804691970, value=85202  
+ 5                    column=name:name, timestamp=1580804691970, value=music    
+ 5                    column=salary:esal, timestamp=1580804691970, value=54525  
+5 row(s) in 0.0160 seconds
+
+
+######################## Hive ##########################
+
+hduser@DBMSLAB-A3-305-09:~$ hive
+
+Logging initialized using configuration in jar:file:/usr/local/hive/lib/hive-common-2.2.0.jar!/hive-log4j2.properties Async: true
+Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
+hive> CREATE external TABLE student_hbase(roll_no int, fname string,lname string,fe_per int,se_per int)
+    > STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'
+    > WITH SERDEPROPERTIES ("hbase.columns.mapping" =
+    > ":key,name:fname,name:lname,per:FE,per:SE")
+    > TBLPROPERTIES ("hbase.table.name" = "sts");
+OK
+Time taken: 1.915 seconds
+hive> select * from student_hbase
+    > ;
+OK
+33201	aditi	badhe	90	NULL
+33202	piyush	agrawal	NULL	NULL
+33212	shubham	darak	NULL	NULL
+Time taken: 1.398 seconds, Fetched: 3 row(s)
+hive> select * from student_hbase;
+OK
+33201	aditi	badhe	90	52
+33202	piyush	agrawal	72	87
+33212	shubham	darak	54	68
+Time taken: 0.183 seconds, Fetched: 3 row(s)
+hive> show tables;
+OK
+emp
+emp_data
+emp_manage
+emp_temp
+empdata
+empdata2
+empdb
+empdb1
+empdb123
+empdbnew
+empdbnew11
+employee
+hbase_flight33130
+hbase_flight_new
+hbase_flight_new33130
+hbase_flightbooking
+hbase_student
+hbase_student_info
+hive_table_emp
+hive_table_emp11
+pict
+ruc
+sample1
+student_hbase
+Time taken: 0.035 seconds, Fetched: 24 row(s)
+hive> select * from student_hbase;
+OK
+33201	aditi	badhe	90	52
+33202	piyush	agrawal	72	87
+33212	shubham	darak	54	68
+33213	omkar	deshpande	85	65
+Time taken: 0.163 seconds, Fetched: 4 row(s)
+hive> show tables;
+OK
+emp
+emp_data
+emp_manage
+emp_temp
+empdata
+empdata2
+empdb
+empdb1
+empdb123
+empdbnew
+empdbnew11
+employee
+hbase_flight33130
+hbase_flight_new
+hbase_flight_new33130
+hbase_flightbooking
+hbase_student
+hbase_student_info
+hive_table_emp
+hive_table_emp11
+pict
+ruc
+sample1
+student_hbase
+Time taken: 0.021 seconds, Fetched: 24 row(s)
+hive> CREATE external TABLE hive_emp(id int, name string, esal string)
+    > STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'
+    > WITH SERDEPROPERTIES ("hbase.columns.mapping" = ":key,name:name,salary:esal")
+    > TBLPROPERTIES ("hbase.table.name" = "emp_hive");
+OK
+Time taken: 0.133 seconds
+hive> select * from hive_emp
+    > ;
+OK
+Time taken: 0.191 seconds
+hive> >create table empdbnew(eno int, ename string, esal int) row format delimited fields terminated
+    > by ',' stored as textfile;
+NoViableAltException(24@[])
+	at org.apache.hadoop.hive.ql.parse.HiveParser.statement(HiveParser.java:1175)
+	at org.apache.hadoop.hive.ql.parse.ParseDriver.parse(ParseDriver.java:204)
+	at org.apache.hadoop.hive.ql.parse.ParseUtils.parse(ParseUtils.java:77)
+	at org.apache.hadoop.hive.ql.parse.ParseUtils.parse(ParseUtils.java:70)
+	at org.apache.hadoop.hive.ql.Driver.compile(Driver.java:453)
+	at org.apache.hadoop.hive.ql.Driver.compileInternal(Driver.java:1252)
+	at org.apache.hadoop.hive.ql.Driver.runInternal(Driver.java:1394)
+	at org.apache.hadoop.hive.ql.Driver.run(Driver.java:1181)
+	at org.apache.hadoop.hive.ql.Driver.run(Driver.java:1171)
+	at org.apache.hadoop.hive.cli.CliDriver.processLocalCmd(CliDriver.java:233)
+	at org.apache.hadoop.hive.cli.CliDriver.processCmd(CliDriver.java:184)
+	at org.apache.hadoop.hive.cli.CliDriver.processLine(CliDriver.java:403)
+	at org.apache.hadoop.hive.cli.CliDriver.executeDriver(CliDriver.java:821)
+	at org.apache.hadoop.hive.cli.CliDriver.run(CliDriver.java:759)
+	at org.apache.hadoop.hive.cli.CliDriver.main(CliDriver.java:686)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.apache.hadoop.util.RunJar.run(RunJar.java:234)
+	at org.apache.hadoop.util.RunJar.main(RunJar.java:148)
+FAILED: ParseException line 1:0 cannot recognize input near '>' 'create' 'table'
+hive> >create table emp_manage_table(eno int, ename string, esal int) row format delimited fields terminated by ',' as textfile;
+NoViableAltException(24@[])
+	at org.apache.hadoop.hive.ql.parse.HiveParser.statement(HiveParser.java:1175)
+	at org.apache.hadoop.hive.ql.parse.ParseDriver.parse(ParseDriver.java:204)
+	at org.apache.hadoop.hive.ql.parse.ParseUtils.parse(ParseUtils.java:77)
+	at org.apache.hadoop.hive.ql.parse.ParseUtils.parse(ParseUtils.java:70)
+	at org.apache.hadoop.hive.ql.Driver.compile(Driver.java:453)
+	at org.apache.hadoop.hive.ql.Driver.compileInternal(Driver.java:1252)
+	at org.apache.hadoop.hive.ql.Driver.runInternal(Driver.java:1394)
+	at org.apache.hadoop.hive.ql.Driver.run(Driver.java:1181)
+	at org.apache.hadoop.hive.ql.Driver.run(Driver.java:1171)
+	at org.apache.hadoop.hive.cli.CliDriver.processLocalCmd(CliDriver.java:233)
+	at org.apache.hadoop.hive.cli.CliDriver.processCmd(CliDriver.java:184)
+	at org.apache.hadoop.hive.cli.CliDriver.processLine(CliDriver.java:403)
+	at org.apache.hadoop.hive.cli.CliDriver.executeDriver(CliDriver.java:821)
+	at org.apache.hadoop.hive.cli.CliDriver.run(CliDriver.java:759)
+	at org.apache.hadoop.hive.cli.CliDriver.main(CliDriver.java:686)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.apache.hadoop.util.RunJar.run(RunJar.java:234)
+	at org.apache.hadoop.util.RunJar.main(RunJar.java:148)
+FAILED: ParseException line 1:0 cannot recognize input near '>' 'create' 'table'
+hive> create table emp_manage_table(eno int, ename string, esal int) row format delimited fields terminated by ',' as textfile;
+NoViableAltException(27@[])
+	at org.apache.hadoop.hive.ql.parse.HiveParser.atomSelectStatement(HiveParser.java:47505)
+	at org.apache.hadoop.hive.ql.parse.HiveParser.selectStatement(HiveParser.java:47854)
+	at org.apache.hadoop.hive.ql.parse.HiveParser.selectStatementWithCTE(HiveParser.java:48769)
+	at org.apache.hadoop.hive.ql.parse.HiveParser.createTableStatement(HiveParser.java:6568)
+	at org.apache.hadoop.hive.ql.parse.HiveParser.ddlStatement(HiveParser.java:3821)
+	at org.apache.hadoop.hive.ql.parse.HiveParser.execStatement(HiveParser.java:1870)
+	at org.apache.hadoop.hive.ql.parse.HiveParser.statement(HiveParser.java:1213)
+	at org.apache.hadoop.hive.ql.parse.ParseDriver.parse(ParseDriver.java:204)
+	at org.apache.hadoop.hive.ql.parse.ParseUtils.parse(ParseUtils.java:77)
+	at org.apache.hadoop.hive.ql.parse.ParseUtils.parse(ParseUtils.java:70)
+	at org.apache.hadoop.hive.ql.Driver.compile(Driver.java:453)
+	at org.apache.hadoop.hive.ql.Driver.compileInternal(Driver.java:1252)
+	at org.apache.hadoop.hive.ql.Driver.runInternal(Driver.java:1394)
+	at org.apache.hadoop.hive.ql.Driver.run(Driver.java:1181)
+	at org.apache.hadoop.hive.ql.Driver.run(Driver.java:1171)
+	at org.apache.hadoop.hive.cli.CliDriver.processLocalCmd(CliDriver.java:233)
+	at org.apache.hadoop.hive.cli.CliDriver.processCmd(CliDriver.java:184)
+	at org.apache.hadoop.hive.cli.CliDriver.processLine(CliDriver.java:403)
+	at org.apache.hadoop.hive.cli.CliDriver.executeDriver(CliDriver.java:821)
+	at org.apache.hadoop.hive.cli.CliDriver.run(CliDriver.java:759)
+	at org.apache.hadoop.hive.cli.CliDriver.main(CliDriver.java:686)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.apache.hadoop.util.RunJar.run(RunJar.java:234)
+	at org.apache.hadoop.util.RunJar.main(RunJar.java:148)
+FAILED: ParseException line 1:112 cannot recognize input near 'textfile' '<EOF>' '<EOF>' in create table statement
+hive> create table emp_manage_table(eno int, ename string, esal int) row format delimited fields terminated by ','stored as textfile;
+OK
+Time taken: 0.134 seconds
+hive> >load data local inpath '/home/hduser/empdb.txt' into table emp_manage_table;
+NoViableAltException(24@[])
+	at org.apache.hadoop.hive.ql.parse.HiveParser.statement(HiveParser.java:1175)
+	at org.apache.hadoop.hive.ql.parse.ParseDriver.parse(ParseDriver.java:204)
+	at org.apache.hadoop.hive.ql.parse.ParseUtils.parse(ParseUtils.java:77)
+	at org.apache.hadoop.hive.ql.parse.ParseUtils.parse(ParseUtils.java:70)
+	at org.apache.hadoop.hive.ql.Driver.compile(Driver.java:453)
+	at org.apache.hadoop.hive.ql.Driver.compileInternal(Driver.java:1252)
+	at org.apache.hadoop.hive.ql.Driver.runInternal(Driver.java:1394)
+	at org.apache.hadoop.hive.ql.Driver.run(Driver.java:1181)
+	at org.apache.hadoop.hive.ql.Driver.run(Driver.java:1171)
+	at org.apache.hadoop.hive.cli.CliDriver.processLocalCmd(CliDriver.java:233)
+	at org.apache.hadoop.hive.cli.CliDriver.processCmd(CliDriver.java:184)
+	at org.apache.hadoop.hive.cli.CliDriver.processLine(CliDriver.java:403)
+	at org.apache.hadoop.hive.cli.CliDriver.executeDriver(CliDriver.java:821)
+	at org.apache.hadoop.hive.cli.CliDriver.run(CliDriver.java:759)
+	at org.apache.hadoop.hive.cli.CliDriver.main(CliDriver.java:686)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.apache.hadoop.util.RunJar.run(RunJar.java:234)
+	at org.apache.hadoop.util.RunJar.main(RunJar.java:148)
+FAILED: ParseException line 1:0 cannot recognize input near '>' 'load' 'data'
+hive> load data local inpath '/home/hduser/empdb.txt' into table emp_manage_table;
+Loading data to table default.emp_manage_table
+OK
+Time taken: 0.356 seconds
+hive> select * from emp_manage_table;
+OK
+1	akshay	25000
+2	omkar	50000
+3	jay	60000
+4	unique	85202
+5	music	54525
+Time taken: 0.103 seconds, Fetched: 5 row(s)
+hive> INSERT INTO hive_emp select * from emp_manage_table;
+WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
+Query ID = hduser_20200204135437_22a2a081-fe53-492b-95a8-4e218bf594b6
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks is set to 0 since there's no reduce operator
+Starting Job = job_1580801769897_0001, Tracking URL = http://localhost:8088/proxy/application_1580801769897_0001/
+Kill Command = /usr/local/hadoop/bin/hadoop job  -kill job_1580801769897_0001
+Hadoop job information for Stage-3: number of mappers: 1; number of reducers: 0
+2020-02-04 13:54:48,835 Stage-3 map = 0%,  reduce = 0%
+2020-02-04 13:54:53,008 Stage-3 map = 100%,  reduce = 0%, Cumulative CPU 2.3 sec
+MapReduce Total cumulative CPU time: 2 seconds 300 msec
+Ended Job = job_1580801769897_0001
+MapReduce Jobs Launched: 
+Stage-Stage-3: Map: 1   Cumulative CPU: 2.3 sec   HDFS Read: 4551 HDFS Write: 0 SUCCESS
+Total MapReduce CPU Time Spent: 2 seconds 300 msec
+OK
+Time taken: 16.77 seconds
+hive> select * from hive_emp;
+OK
+1	akshay	25000
+2	omkar	50000
+3	jay	60000
+4	unique	85202
+5	music	54525
+Time taken: 0.169 seconds, Fetched: 5 row(s)
+hive> select avg(esal) forom hive_emp;
+FAILED: ParseException line 1:23 extraneous input 'hive_emp' expecting EOF near '<EOF>'
+hive> select avg(esal) from hive_emp;
+WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
+Query ID = hduser_20200204140614_d5825252-5b08-4f87-8fee-a28acfdf2b98
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1580801769897_0002, Tracking URL = http://localhost:8088/proxy/application_1580801769897_0002/
+Kill Command = /usr/local/hadoop/bin/hadoop job  -kill job_1580801769897_0002
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1
+2020-02-04 14:06:25,117 Stage-1 map = 0%,  reduce = 0%
+2020-02-04 14:06:29,260 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 2.04 sec
+2020-02-04 14:06:34,393 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 3.12 sec
+MapReduce Total cumulative CPU time: 3 seconds 120 msec
+Ended Job = job_1580801769897_0002
+MapReduce Jobs Launched: 
+Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 3.12 sec   HDFS Read: 9218 HDFS Write: 107 SUCCESS
+Total MapReduce CPU Time Spent: 3 seconds 120 msec
+OK
+54945.4
+Time taken: 22.3 seconds, Fetched: 1 row(s)

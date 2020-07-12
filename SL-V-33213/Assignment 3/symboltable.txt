@@ -1,0 +1,7 @@
+
+1	A	422
+
+2	ONE	406
+
+3	B	432
+ymbol declaration not found

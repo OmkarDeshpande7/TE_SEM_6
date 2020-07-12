@@ -1,0 +1,92 @@
+********************ASSIGNMENT 10*******************
+
+mysql> source c1_totalamt.sql
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> call total(503);
+    -> //
++----------+-----------+
+| order_id | total_amt |
++----------+-----------+
+|      503 |    615500 |
++----------+-----------+
+1 row in set (0.02 sec)
+
+Query OK, 0 rows affected (0.02 sec)
+
+------------------CURSOR IN PROCEDURE---------------
+
+delimiter //
+
+CREATE PROCEDURE total(IN order_id int)
+
+BEGIN
+
+	declare a int default 0;
+	declare total_amt int default 0;
+	declare j int default 1;
+	declare s cursor for select total from select1 where o_id=order_id;
+	declare continue handler for not found set j=0;
+	
+	open s;
+	fetch s into a;
+	
+	while j=1 do
+
+		set total_amt=total_amt + a;
+		fetch s into a;
+		
+	end while;
+
+	select order_id,total_amt;
+
+	close s;	
+	
+END;
+
+//
+
+----------------------------------------------------
+
+
+------------------CURSOR IN PROCEDURE---------------
+delimiter //
+
+CREATE PROCEDURE grade()
+
+BEGIN
+	
+	declare a1 int default 0;
+	declare j int default 1;
+	
+	declare s cursor for select marks from stud_info;
+	
+	declare continue handler for not found set j=0;
+	
+	open s;
+	
+	fetch s into a1;
+	
+	while j=1 do
+	
+		if a1>=80 then
+			update stud_info set grade='O' where marks=a1;
+		else
+			update stud_info set grade='A' where marks=a1;
+			
+		end if;
+		
+		fetch s into a1;
+			
+	end while;
+	
+	select * from stud_info;
+	
+	close s;
+	
+END;
+
+//
+
+----------------------------------------------------
+

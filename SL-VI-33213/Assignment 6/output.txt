@@ -1,0 +1,227 @@
+﻿# Load Libraries
+> library("ggplot2")
+> library("dplyr")
+> library("Metrics")
+> library("caret")
+> library("randomForest")
+> library("e1071")
+> library("caTools")
+> set.seed(1)
+> getwd()
+[1] "P:/TE_SEM_6/SL-VI-33213/Assignment 6"
+> setwd("P:\\TE_SEM_6\\SL-VI-33213\\Assignment 6")
+> getwd()
+[1] "P:/TE_SEM_6/SL-VI-33213/Assignment 6"
+> df <- read.csv("AirQualityUCI.csv", header=TRUE, sep=",")
+> for(i in names(df)[c(3:15)]){
++   df[i][df[i]==-200] <- NA
++ }
+> print(summary(df))
+         Date            Time          CO.GT.        PT08.S1.CO.      NMHC.GT.     
+ 01/01/2005:  24   00:00:00: 390   Min.   : 0.100   Min.   : 647   Min.   :   7.0  
+ 01/02/2005:  24   01:00:00: 390   1st Qu.: 1.100   1st Qu.: 937   1st Qu.:  67.0  
+ 01/03/2005:  24   02:00:00: 390   Median : 1.800   Median :1063   Median : 150.0  
+ 01/04/2004:  24   03:00:00: 390   Mean   : 2.153   Mean   :1100   Mean   : 218.8  
+ 01/04/2005:  24   04:00:00: 390   3rd Qu.: 2.900   3rd Qu.:1231   3rd Qu.: 297.0  
+ 01/05/2004:  24   05:00:00: 390   Max.   :11.900   Max.   :2040   Max.   :1189.0  
+ (Other)   :9213   (Other) :7017   NA's   :1683     NA's   :366    NA's   :8443    
+    C6H6.GT.     PT08.S2.NMHC.       NOx.GT.        PT08.S3.NOx.       NO2.GT.     
+ Min.   : 0.10   Min.   : 383.0   Min.   :   2.0   Min.   : 322.0   Min.   :  2.0  
+ 1st Qu.: 4.40   1st Qu.: 734.5   1st Qu.:  98.0   1st Qu.: 658.0   1st Qu.: 78.0  
+ Median : 8.20   Median : 909.0   Median : 180.0   Median : 806.0   Median :109.0  
+ Mean   :10.08   Mean   : 939.2   Mean   : 246.9   Mean   : 835.5   Mean   :113.1  
+ 3rd Qu.:14.00   3rd Qu.:1116.0   3rd Qu.: 326.0   3rd Qu.: 969.5   3rd Qu.:142.0  
+ Max.   :63.70   Max.   :2214.0   Max.   :1479.0   Max.   :2683.0   Max.   :340.0  
+ NA's   :366     NA's   :366      NA's   :1639     NA's   :366      NA's   :1642   
+  PT08.S4.NO2.   PT08.S5.O3.           T               RH              AH        
+ Min.   : 551   Min.   : 221.0   Min.   :-1.90   Min.   : 9.20   Min.   :0.1847  
+ 1st Qu.:1227   1st Qu.: 731.5   1st Qu.:11.80   1st Qu.:35.80   1st Qu.:0.7368  
+ Median :1463   Median : 963.0   Median :17.80   Median :49.60   Median :0.9954  
+ Mean   :1456   Mean   :1022.9   Mean   :18.32   Mean   :49.23   Mean   :1.0255  
+ 3rd Qu.:1674   3rd Qu.:1273.5   3rd Qu.:24.40   3rd Qu.:62.50   3rd Qu.:1.3137  
+ Max.   :2775   Max.   :2523.0   Max.   :44.60   Max.   :88.70   Max.   :2.2310  
+ NA's   :366    NA's   :366      NA's   :366     NA's   :366     NA's   :366     
+> # Filling NA with Mean
+> for(i in names(df)[c(3:15)]){
++   df[i][is.na(df[i])] = mean(df[[i]], na.rm=TRUE)
++ }
+> print(summary(df))
+         Date            Time          CO.GT.        PT08.S1.CO.      NMHC.GT.     
+ 01/01/2005:  24   00:00:00: 390   Min.   : 0.100   Min.   : 647   Min.   :   7.0  
+ 01/02/2005:  24   01:00:00: 390   1st Qu.: 1.200   1st Qu.: 941   1st Qu.: 218.8  
+ 01/03/2005:  24   02:00:00: 390   Median : 2.153   Median :1075   Median : 218.8  
+ 01/04/2004:  24   03:00:00: 390   Mean   : 2.153   Mean   :1100   Mean   : 218.8  
+ 01/04/2005:  24   04:00:00: 390   3rd Qu.: 2.600   3rd Qu.:1221   3rd Qu.: 218.8  
+ 01/05/2004:  24   05:00:00: 390   Max.   :11.900   Max.   :2040   Max.   :1189.0  
+ (Other)   :9213   (Other) :7017                                                   
+    C6H6.GT.     PT08.S2.NMHC.       NOx.GT.        PT08.S3.NOx.       NO2.GT.     
+ Min.   : 0.10   Min.   : 383.0   Min.   :   2.0   Min.   : 322.0   Min.   :  2.0  
+ 1st Qu.: 4.60   1st Qu.: 743.0   1st Qu.: 112.0   1st Qu.: 666.0   1st Qu.: 86.0  
+ Median : 8.60   Median : 923.0   Median : 229.0   Median : 818.0   Median :113.1  
+ Mean   :10.08   Mean   : 939.2   Mean   : 246.9   Mean   : 835.5   Mean   :113.1  
+ 3rd Qu.:13.60   3rd Qu.:1105.0   3rd Qu.: 284.0   3rd Qu.: 960.0   3rd Qu.:133.0  
+ Max.   :63.70   Max.   :2214.0   Max.   :1479.0   Max.   :2683.0   Max.   :340.0  
+                                                                                   
+  PT08.S4.NO2.   PT08.S5.O3.         T               RH              AH        
+ Min.   : 551   Min.   : 221   Min.   :-1.90   Min.   : 9.20   Min.   :0.1847  
+ 1st Qu.:1242   1st Qu.: 742   1st Qu.:12.00   1st Qu.:36.60   1st Qu.:0.7461  
+ Median :1456   Median : 983   Median :18.30   Median :49.23   Median :1.0154  
+ Mean   :1456   Mean   :1023   Mean   :18.32   Mean   :49.23   Mean   :1.0255  
+ 3rd Qu.:1662   3rd Qu.:1255   3rd Qu.:24.10   3rd Qu.:61.90   3rd Qu.:1.2962  
+ Max.   :2775   Max.   :2523   Max.   :44.60   Max.   :88.70   Max.   :2.2310  
+                                                                               
+> # Box Plots to Check for Outliers
+> for(i in names(df)[c(3:15)]){
++   boxplot(x=df[i], main=i, col="red")
++ }
+> s
+Error: object 's' not found
+> # Finding Correlations
+> cat("Correlations on df filled with Mean: ")
+Correlations on df filled with Mean: 
+> print(cor(df[names(df)[c(3:15)]], use="complete.obs", method="kendall"))
+                    CO.GT. PT08.S1.CO.    NMHC.GT.    C6H6.GT. PT08.S2.NMHC.
+CO.GT.         1.000000000  0.57946966  0.19995454  0.63575646    0.63346943
+PT08.S1.CO.    0.579469657  1.00000000  0.13370226  0.70906686    0.70732455
+NMHC.GT.       0.199954540  0.13370226  1.00000000  0.19654362    0.19526249
+C6H6.GT.       0.635756458  0.70906686  0.19654362  1.00000000    0.99008550
+PT08.S2.NMHC.  0.633469428  0.70732455  0.19526249  0.99008550    1.00000000
+NOx.GT.        0.523471140  0.42556643  0.16059724  0.41736425    0.41541031
+PT08.S3.NOx.  -0.517285894 -0.67850143 -0.22297467 -0.65862562   -0.66066266
+NO2.GT.        0.495241514  0.40789265  0.16846294  0.40916155    0.40702462
+PT08.S4.NO2.   0.379416370  0.45914819  0.13327449  0.55584001    0.55665708
+PT08.S5.O3.    0.562827903  0.71739164  0.16202103  0.69210556    0.69074114
+T              0.045800421  0.05079302  0.08423310  0.18413901    0.18484619
+RH             0.002291705  0.06201184 -0.04582846 -0.08192358   -0.08266928
+AH             0.043710485  0.08920450  0.07051866  0.12654220    0.12660936
+                  NOx.GT. PT08.S3.NOx.     NO2.GT. PT08.S4.NO2.  PT08.S5.O3.
+CO.GT.         0.52347114  -0.51728589  0.49524151   0.37941637  0.562827903
+PT08.S1.CO.    0.42556643  -0.67850143  0.40789265   0.45914819  0.717391637
+NMHC.GT.       0.16059724  -0.22297467  0.16846294   0.13327449  0.162021026
+C6H6.GT.       0.41736425  -0.65862562  0.40916155   0.55584001  0.692105559
+PT08.S2.NMHC.  0.41541031  -0.66066266  0.40702462   0.55665708  0.690741140
+NOx.GT.        1.00000000  -0.48240025  0.62883494   0.09624336  0.485078295
+PT08.S3.NOx.  -0.48240025   1.00000000 -0.42308803  -0.37978329 -0.677094214
+NO2.GT.        0.62883494  -0.42308803  1.00000000   0.09470764  0.440669802
+PT08.S4.NO2.   0.09624336  -0.37978329  0.09470764   1.00000000  0.398210515
+PT08.S5.O3.    0.48507830  -0.67709421  0.44066980   0.39821051  1.000000000
+T             -0.15430246  -0.07914195 -0.10558601   0.43629149 -0.001628588
+RH             0.11670569  -0.05323363 -0.07058098  -0.04540674  0.083118454
+AH            -0.08205051  -0.14657347 -0.18521881   0.46247642  0.053233818
+                         T           RH          AH
+CO.GT.         0.045800421  0.002291705  0.04371049
+PT08.S1.CO.    0.050793023  0.062011845  0.08920450
+NMHC.GT.       0.084233103 -0.045828457  0.07051866
+C6H6.GT.       0.184139015 -0.081923576  0.12654220
+PT08.S2.NMHC.  0.184846194 -0.082669279  0.12660936
+NOx.GT.       -0.154302462  0.116705691 -0.08205051
+PT08.S3.NOx.  -0.079141954 -0.053233630 -0.14657347
+NO2.GT.       -0.105586006 -0.070580980 -0.18521881
+PT08.S4.NO2.   0.436291489 -0.045406742  0.46247642
+PT08.S5.O3.   -0.001628588  0.083118454  0.05323382
+T              1.000000000 -0.391152233  0.51044952
+RH            -0.391152233  1.000000000  0.10007959
+AH             0.510449524  0.100079589  1.00000000
+> # C6H6.GT. and PT08.S2.NHMC. have a high correlation of ~ 1 and also have almost similar correlations with the target variables and hence PT08.S2.NHMC. can be dropped
+> df$PT08.S2.NMHC. <- NULL
+> # Normalizing Data
+> df[names(df)[c(3:11,13,14)]]<-scale(df[names(df)[c(3:11,13,14)]])
+> # Train Test Split
+> sample = sample.split(df$T, SplitRatio = .80)
+> train = subset(df, sample == TRUE)
+> test  = subset(df, sample == FALSE)
+> cat("Train Dimensions: ", dim(train), "\n")
+Train Dimensions:  7503 14 
+> cat("Test Dimensions: ", dim(test), "\n")
+Test Dimensions:  1854 14 
+> # Multiple Linear Regression
+> T_linearRegressor <- lm(T ~ CO.GT.+PT08.S1.CO.+NMHC.GT.+C6H6.GT.+NOx.GT.+PT08.S3.NOx.+NO2.GT.+PT08.S4.NO2.+PT08.S5.O3.+RH+AH, data=train)
+> # show results
+> print(summary(T_linearRegressor))
+
+Call:
+lm(formula = T ~ CO.GT. + PT08.S1.CO. + NMHC.GT. + C6H6.GT. + 
+    NOx.GT. + PT08.S3.NOx. + NO2.GT. + PT08.S4.NO2. + PT08.S5.O3. + 
+    RH + AH, data = train)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-9.5332 -1.3716 -0.1863  1.1275 13.2818 
+
+Coefficients:
+             Estimate Std. Error  t value Pr(>|t|)    
+(Intercept)  18.32977    0.02665  687.878  < 2e-16 ***
+CO.GT.       -0.32840    0.06015   -5.460 4.93e-08 ***
+PT08.S1.CO.   0.04351    0.07631    0.570  0.56855    
+NMHC.GT.     -0.07730    0.02866   -2.697  0.00701 ** 
+C6H6.GT.     -0.91988    0.09489   -9.694  < 2e-16 ***
+NOx.GT.       0.51054    0.06308    8.093 6.74e-16 ***
+PT08.S3.NOx. -0.36546    0.05200   -7.028 2.27e-12 ***
+NO2.GT.      -0.02258    0.05116   -0.441  0.65897    
+PT08.S4.NO2.  2.41306    0.08656   27.878  < 2e-16 ***
+PT08.S5.O3.  -0.91739    0.07544  -12.160  < 2e-16 ***
+RH           -5.88818    0.03364 -175.044  < 2e-16 ***
+AH            5.35135    0.05513   97.075  < 2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 2.308 on 7491 degrees of freedom
+Multiple R-squared:  0.9293,	Adjusted R-squared:  0.9292 
+F-statistic:  8956 on 11 and 7491 DF,  p-value: < 2.2e-16
+
+> # Test Prediction and Accuracy
+> pred <- predict(T_linearRegressor, test)
+> cat("\nTest Dataset Scores - \n")
+
+Test Dataset Scores - 
+> print(data.frame(R2 = R2(pred, test$T),RMSE = RMSE(pred, test$T),MAE = MAE(pred, test$T),MSE = mse(pred, test$T)))
+         R2     RMSE      MAE      MSE
+1 0.9299101 2.273321 1.672301 5.167989
+> # Train Prediction and Accuracy
+> pred <- predict(T_linearRegressor, train)
+> cat("\nTrain Dataset Scores - \n")
+
+Train Dataset Scores - 
+> print(data.frame(R2 = R2(pred, train$T),RMSE = RMSE(pred, train$T),MAE = MAE(pred, train$T),MSE = mse(pred, train$T)))
+        R2     RMSE      MAE      MSE
+1 0.929332 2.306194 1.681472 5.318532
+> plot(T_linearRegressor)
+Hit <Return> to see next plot: 
+Hit <Return> to see next plot: 
+Hit <Return> to see next plot: 
+Hit <Return> to see next plot: 
+> 
+> #
+> #
+> #
+> # Random Forest Regression
+> cat("Random Forest Regressor - \n")
+Random Forest Regressor - 
+> T_RFregressor <- randomForest(T ~ CO.GT.+PT08.S1.CO.+NMHC.GT.+C6H6.GT.+NOx.GT.+PT08.S3.NOx.+NO2.GT.+PT08.S4.NO2.+PT08.S5.O3.+RH+AH, data=train, ntree = 100)
+> print(T_RFregressor) # show results
+
+Call:
+ randomForest(formula = T ~ CO.GT. + PT08.S1.CO. + NMHC.GT. +      C6H6.GT. + NOx.GT. + PT08.S3.NOx. + NO2.GT. + PT08.S4.NO2. +      PT08.S5.O3. + RH + AH, data = train, ntree = 100) 
+               Type of random forest: regression
+                     Number of trees: 100
+No. of variables tried at each split: 3
+
+          Mean of squared residuals: 1.228046
+                    % Var explained: 98.37
+> plot(T_RFregressor)
+> # Test Prediction and Accuracy
+> pred <- predict(T_RFregressor, test)
+> cat("\nTest Dataset Scores - \n")
+
+Test Dataset Scores - 
+> print(data.frame(R2 = R2(pred, test$T),RMSE = RMSE(pred, test$T),MAE = MAE(pred, test$T),MSE = mse(pred, test$T)))
+         R2      RMSE       MAE       MSE
+1 0.9888745 0.9734573 0.6840184 0.9476192
+> # Train Prediction and Accuracy
+> pred <- predict(T_RFregressor, train)
+> cat("\nTrain Dataset Scores - \n")
+
+Train Dataset Scores - 
+> print(data.frame(R2 = R2(pred, train$T),RMSE = RMSE(pred, train$T),MAE = MAE(pred, train$T),MSE = mse(pred, train$T)))
+         R2      RMSE       MAE       MSE
+1 0.9975361 0.4764923 0.3243055 0.2270449

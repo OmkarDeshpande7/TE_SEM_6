@@ -1,0 +1,227 @@
+*******************ASSIGNMENT 9************************
+
+mysql> source p0_sum.sql
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> call sum_int(100);
+    -> //
++----------+---------+
+| sum_even | sum_odd |
++----------+---------+
+|     2550 |    2500 |
++----------+---------+
+1 row in set (0.01 sec)
+
+Query OK, 0 rows affected (0.01 sec)
+
+----------------------PROCEDURE-----------------------
+
+delimiter //
+
+CREATE PROCEDURE sum_int(IN a int)
+
+BEGIN 
+
+	declare sum_even int;
+	declare sum_odd int;
+	declare i int;
+	
+	set sum_even=0;
+	set sum_odd=0;
+	set i=0;
+	
+	while i<=a do
+	
+		if(i%2=0) then
+			set sum_even=sum_even+i;
+		else
+			set sum_odd=sum_odd+i;
+		
+		end if;
+		
+		set i=i+1;
+		
+	end while;
+	
+	select sum_even,sum_odd;
+END;
+
+//
+		
+-------------------------------------------------------
+
+
+----------------------PROCEDURE-----------------------
+
+delimiter //
+
+CREATE PROCEDURE c_info(IN id int)
+
+BEGIN 
+
+select * from customer where c_id=id;
+
+END;
+
+//
+
+-------------------------------------------------------
+
+
+mysql> source t1_emp.sql
+Query OK, 0 rows affected (0.07 sec)
+
+mysql> insert into salary values (100,50000,0,0,0);
+    -> //
+Query OK, 1 row affected (0.04 sec)
+
+mysql> insert into salary values (101,40000,0,0,0);
+
+    -> //
+Query OK, 1 row affected (0.03 sec)
+
+mysql> select * from salary;
+    -> //
++------+-------+-------+------+------+
+| eno  | basic | da    | hra  | it   |
++------+-------+-------+------+------+
+|  100 | 50000 | 29500 |  500 | 1000 |
+|  101 | 40000 | 23600 |  500 |  800 |
++------+-------+-------+------+------+
+2 rows in set (0.00 sec)
+
+mysql> insert into salary values (102,45000,0,0,0);
+    -> //
+Query OK, 1 row affected (0.03 sec)
+
+mysql> insert into salary values (103,36000,0,0,0);
+    -> //
+Query OK, 1 row affected (0.03 sec)
+
+mysql> insert into salary values (104,42000,0,0,0);
+    -> //
+Query OK, 1 row affected (0.04 sec)
+
+mysql> insert into salary values (105,38000,0,0,0);
+    -> //
+Query OK, 1 row affected (0.05 sec)
+
+mysql> select * from salary;
+    -> //
++------+-------+-------+------+------+
+| eno  | basic | da    | hra  | it   |
++------+-------+-------+------+------+
+|  100 | 50000 | 29500 |  500 | 1000 |
+|  101 | 40000 | 23600 |  500 |  800 |
+|  102 | 45000 | 26550 |  500 |  900 |
+|  103 | 36000 | 21240 |  500 |  720 |
+|  104 | 42000 | 24780 |  500 |  840 |
+|  105 | 38000 | 22420 |  500 |  760 |
++------+-------+-------+------+------+
+6 rows in set (0.00 sec)
+
+--------------TRIGGER----------------
+
+delimiter //
+
+CREATE TRIGGER t1
+
+BEFORE INSERT ON salary
+
+FOR EACH ROW
+
+BEGIN
+
+	set new.da=(0.59)*new.basic;
+	set new.hra=500;
+	set new.it=(0.02)*new.basic;
+
+END;
+
+//
+
+-------------------------------------
+
+mysql> source p2_q3.sql
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> call p2(100);
+    -> //
++-----------------+-----------------+--------+
+| total_allowance | total_deduction | netpay |
++-----------------+-----------------+--------+
+|           80000 |            1000 |  79000 |
++-----------------+-----------------+--------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> call p2(104);
+    -> //
++-----------------+-----------------+--------+
+| total_allowance | total_deduction | netpay |
++-----------------+-----------------+--------+
+|           67280 |             840 |  66440 |
++-----------------+-----------------+--------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> call p2(103);
+    -> //
++-----------------+-----------------+--------+
+| total_allowance | total_deduction | netpay |
++-----------------+-----------------+--------+
+|           57740 |             720 |  57020 |
++-----------------+-----------------+--------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+----------------------PROCEDURE-----------------------
+
+delimiter //
+
+CREATE PROCEDURE p2(IN enum int)
+
+BEGIN
+	
+	declare a0 int default 0;
+	declare a1 int default 0;
+	declare a2 int default 0;
+	declare a3 int default 0;
+
+	declare total_allowance int default 0;
+	declare total_deduction int default 0;
+	declare netpay int default 0;
+	
+	declare j int default 1;
+	
+	declare s0 cursor for select basic,da,hra,it from salary where enum=eno;
+	
+	declare continue handler for not found set j=0;
+	
+	open s0;
+	
+	fetch s0 into a0,a1,a2,a3; 
+	
+	while j=1 do
+	
+		set total_allowance=a0+a1+a2;
+		set total_deduction=a3;
+		set netpay=total_allowance - total_deduction;
+		
+		fetch s0 into a0,a1,a2,a3; 
+		
+	end while;
+	
+	select total_allowance,total_deduction,netpay;
+	
+	close s0;
+
+END;
+
+//
+
+-------------------------------------------------------
+

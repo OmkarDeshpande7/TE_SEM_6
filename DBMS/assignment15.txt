@@ -1,0 +1,190 @@
+piyush@piyush-Inspiron-3576:~$ mongo
+MongoDB shell version v3.4.23
+connecting to: mongodb://127.0.0.1:27017
+MongoDB server version: 3.4.23
+Welcome to the MongoDB shell.
+For interactive help, type "help".
+For more comprehensive documentation, see
+	http://docs.mongodb.org/
+Questions? Try the support group
+	http://groups.google.com/group/mongodb-user
+Server has startup warnings: 
+2019-10-12T19:21:25.112+0530 I STORAGE  [initandlisten] 
+2019-10-12T19:21:25.112+0530 I STORAGE  [initandlisten] ** WARNING: Using the XFS filesystem is strongly recommended with the WiredTiger storage engine
+2019-10-12T19:21:25.112+0530 I STORAGE  [initandlisten] **          See http://dochub.mongodb.org/core/prodnotes-filesystem
+2019-10-12T19:21:25.707+0530 I CONTROL  [initandlisten] 
+2019-10-12T19:21:25.707+0530 I CONTROL  [initandlisten] ** WARNING: Access control is not enabled for the database.
+2019-10-12T19:21:25.707+0530 I CONTROL  [initandlisten] **          Read and write access to data and configuration is unrestricted.
+2019-10-12T19:21:25.707+0530 I CONTROL  [initandlisten] 
+> show dbs;
+admin  0.000GB
+local  0.000GB
+> use ordermanagement;
+switched to db ordermanagement
+> show collections;
+> db.createCollection("orderMgmt",{validator:{order_id:{$type:"number"}}}")
+2019-10-12T19:32:09.289+0530 E QUERY    [thread1] SyntaxError: unterminated string literal @(shell):1:71
+> db.createCollection("orderMgmt");
+{ "ok" : 1 }
+> var v={order_id:1,cust_name:"akash",order_detail:[{prod_name:"pen",qty:2,price:20},{prod_name:"pencil",qty:1,price:10},{prod_name:"eraser",qty:5,price:05}],total_amount:0}
+> db.orderMgmt.insert(v)
+WriteResult({ "nInserted" : 1 })
+> var v={order_id:2,cust_name:"raj",order_detail:[{prod_name:"book",qty:2,price:20},{prod_name:"pencil",qty:1,price:10},{prod_name:"eraser",qty:5,price:05}],total_amount:0}
+> db.orderMgmt.insert(v);
+WriteResult({ "nInserted" : 1 })
+> var v={order_id:3,cust_name:"swapnil",order_detail:[{prod_name:"book",qty:2,price:20},{prod_name:"pencil",qty:1,price:10}],total_amount:0};
+> db.orderMgmt.insert(v);
+WriteResult({ "nInserted" : 1 })
+> db.orderMgmt.find().pretty();
+{
+	"_id" : ObjectId("5da1dd29b730ae06444236d4"),
+	"order_id" : 1,
+	"cust_name" : "akash",
+	"order_detail" : [
+		{
+			"prod_name" : "pen",
+			"qty" : 2,
+			"price" : 20
+		},
+		{
+			"prod_name" : "pencil",
+			"qty" : 1,
+			"price" : 10
+		},
+		{
+			"prod_name" : "eraser",
+			"qty" : 5,
+			"price" : 5
+		}
+	],
+	"total_amount" : 0
+}
+{
+	"_id" : ObjectId("5da1dd47b730ae06444236d5"),
+	"order_id" : 2,
+	"cust_name" : "raj",
+	"order_detail" : [
+		{
+			"prod_name" : "book",
+			"qty" : 2,
+			"price" : 20
+		},
+		{
+			"prod_name" : "pencil",
+			"qty" : 1,
+			"price" : 10
+		},
+		{
+			"prod_name" : "eraser",
+			"qty" : 5,
+			"price" : 5
+		}
+	],
+	"total_amount" : 0
+}
+{
+	"_id" : ObjectId("5da1dd7ab730ae06444236d6"),
+	"order_id" : 3,
+	"cust_name" : "swapnil",
+	"order_detail" : [
+		{
+			"prod_name" : "book",
+			"qty" : 2,
+			"price" : 20
+		},
+		{
+			"prod_name" : "pencil",
+			"qty" : 1,
+			"price" : 10
+		}
+	],
+	"total_amount" : 0
+}
+> var mapFunction2 = function() {
+... ...                        for (var v = 0; v < this.order_detail.length; v++) {
+... ...                            var key = this.order_detail[v].prod_name;
+... ...                            var value = {
+... ...                                          count: 1,
+... ...                                          qty: this.order_detail[v].qty
+... ...                                        };
+... ...                            emit(key, value);
+... ...                        }
+... ...                     };
+> var reduceFunction2 = function(keyprod_name, countObjVals) {
+... ...                      reducedVal = { count: 0, qty: 0 };
+... ... 
+... ...                      for (var idx = 0; idx < countObjVals.length; idx++) {
+... ...                          reducedVal.count += countObjVals[idx].count;
+... ...                          reducedVal.qty += countObjVals[idx].qty;
+... ...                      }
+... ... 
+... ...                      return reducedVal;
+... ...                   };
+>  db.orderMgmt.mapReduce(mapFunction2,reduceFunction2,{out:"qty_total"})
+{
+	"result" : "qty_total",
+	"timeMillis" : 559,
+	"counts" : {
+		"input" : 3,
+		"emit" : 8,
+		"reduce" : 3,
+		"output" : 4
+	},
+	"ok" : 1
+}
+> db.qty_total.find().pretty();
+{ "_id" : "book", "value" : { "count" : 2, "qty" : 4 } }
+{ "_id" : "eraser", "value" : { "count" : 2, "qty" : 10 } }
+{ "_id" : "pen", "value" : { "count" : 1, "qty" : 2 } }
+{ "_id" : "pencil", "value" : { "count" : 3, "qty" : 3 } }
+> var finalizeFunction2 = function (key, reducedVal) {
+... ... 
+... ...                        reducedVal.avg = reducedVal.qty/reducedVal.count;
+... ... 
+... ...                        return reducedVal;
+... ... 
+... ...                     };
+> 
+> db.orderMgmt.mapReduce( mapFunction2,reduceFunction2,{out: "map_reduce_example" ,finalize: finalizeFunction2})
+{
+	"result" : "map_reduce_example",
+	"timeMillis" : 392,
+	"counts" : {
+		"input" : 3,
+		"emit" : 8,
+		"reduce" : 3,
+		"output" : 4
+	},
+	"ok" : 1
+}
+> {
+... "result" : "map_reduce_example",
+... "timeMillis" : 412,
+... "counts" : {
+... "input" : 3,
+... "emit" : 8,
+... "reduce" : 3,
+... "output" : 4
+... },
+... "ok" : 1
+... }
+2019-10-12T19:38:16.200+0530 E QUERY    [thread1] SyntaxError: missing ; before statement @(shell):2:9
+>  db.orderMgmt.mapReduce( mapFunction2,reduceFunction2,{out: "map_reduce_example" ,finalize: finalizeFunction2});
+{
+	"result" : "map_reduce_example",
+	"timeMillis" : 388,
+	"counts" : {
+		"input" : 3,
+		"emit" : 8,
+		"reduce" : 3,
+		"output" : 4
+	},
+	"ok" : 1
+}
+> db.map_reduce_example.find().pretty();
+{ "_id" : "book", "value" : { "count" : 2, "qty" : 4, "avg" : 2 } }
+{ "_id" : "eraser", "value" : { "count" : 2, "qty" : 10, "avg" : 5 } }
+{ "_id" : "pen", "value" : { "count" : 1, "qty" : 2, "avg" : 2 } }
+{ "_id" : "pencil", "value" : { "count" : 3, "qty" : 3, "avg" : 1 } }
+> 
+

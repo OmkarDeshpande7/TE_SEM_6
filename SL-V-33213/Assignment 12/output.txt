@@ -1,0 +1,29 @@
+scarecrow@ubuntu:~/Desktop$ yacc wh.y -d
+scarecrow@ubuntu:~/Desktop$ lex wh.l
+scarecrow@ubuntu:~/Desktop$ gcc lex.yy.c y.tab.c -w
+scarecrow@ubuntu:~/Desktop$ ./a.out
+Enter the exp: while(a<=b){     
+1+2;}
+Input accepted.
+scarecrow@ubuntu:~/Desktop$ ./a.out
+Enter the exp: wjso(a=b){a+2}
+
+Entered expression is Invalid !
+
+scarecrow@ubuntu:~/Desktop$ ./a.out
+Enter the exp: while(a==b){1+2}
+
+Entered expression is Invalid !
+
+scarecrow@ubuntu:~/Desktop$ ./a.out
+Enter the exp: while(a==b){1+2;}
+Input accepted.
+
+scarecrow@ubuntu:~/Desktop$ ./a.out
+Enter the exp: while(1){a=1+2;
+b=3+4;}
+Input accepted.
+scarecrow@ubuntu:~/Desktop$ 
+
+
+

@@ -1,0 +1,229 @@
+> ####################################################################################
+> # Author - Omkar Deshpande (33213 - K10)
+> #
+> # Problem statement - Perform the following operations using R/Python on the Air quality and Heart Diseases data sets 
+> #               a. Data cleaning 
+> #               b. Data integration 
+> #               c. Data transformation 
+> #               d. Error correcting 
+> #               e. Data model building  
+> #####################################################################################
+> 
+> #load library reshape2
+> library(reshape2)
+> 
+> #get working directory
+> getwd()
+[1] "P:/TE_SEM_6/SL-VI-33213/Assignment 5/Facebook"
+> 
+> #set working directory
+> setwd("P:\\TE_SEM_6\\SL-VI-33213\\Assignment 5\\Facebook")
+> getwd()
+[1] "P:/TE_SEM_6/SL-VI-33213/Assignment 5/Facebook"
+> 
+> #mport dataset
+> df<-read.csv("dataset_Facebook.csv",sep = ';')#import csv file
+> 
+> 
+> dim(df)         # View Dataframe dimensions
+[1] 500  19
+> print(names(df))
+ [1] "Page.total.likes"                                                   
+ [2] "Type"                                                               
+ [3] "Category"                                                           
+ [4] "Post.Month"                                                         
+ [5] "Post.Weekday"                                                       
+ [6] "Post.Hour"                                                          
+ [7] "Paid"                                                               
+ [8] "Lifetime.Post.Total.Reach"                                          
+ [9] "Lifetime.Post.Total.Impressions"                                    
+[10] "Lifetime.Engaged.Users"                                             
+[11] "Lifetime.Post.Consumers"                                            
+[12] "Lifetime.Post.Consumptions"                                         
+[13] "Lifetime.Post.Impressions.by.people.who.have.liked.your.Page"       
+[14] "Lifetime.Post.reach.by.people.who.like.your.Page"                   
+[15] "Lifetime.People.who.have.liked.your.Page.and.engaged.with.your.post"
+[16] "comment"                                                            
+[17] "like"                                                               
+[18] "share"                                                              
+[19] "Total.Interactions"                                                 
+> head(df)
+  Page.total.likes   Type Category Post.Month Post.Weekday Post.Hour Paid
+1           139441  Photo        2         12            4         3    0
+2           139441 Status        2         12            3        10    0
+3           139441  Photo        3         12            3         3    0
+4           139441  Photo        2         12            2        10    1
+5           139441  Photo        2         12            2         3    0
+6           139441 Status        2         12            1         9    0
+  Lifetime.Post.Total.Reach Lifetime.Post.Total.Impressions Lifetime.Engaged.Users
+1                      2752                            5091                    178
+2                     10460                           19057                   1457
+3                      2413                            4373                    177
+4                     50128                           87991                   2211
+5                      7244                           13594                    671
+6                     10472                           20849                   1191
+  Lifetime.Post.Consumers Lifetime.Post.Consumptions
+1                     109                        159
+2                    1361                       1674
+3                     113                        154
+4                     790                       1119
+5                     410                        580
+6                    1073                       1389
+  Lifetime.Post.Impressions.by.people.who.have.liked.your.Page
+1                                                         3078
+2                                                        11710
+3                                                         2812
+4                                                        61027
+5                                                         6228
+6                                                        16034
+  Lifetime.Post.reach.by.people.who.like.your.Page
+1                                             1640
+2                                             6112
+3                                             1503
+4                                            32048
+5                                             3200
+6                                             7852
+  Lifetime.People.who.have.liked.your.Page.and.engaged.with.your.post comment like
+1                                                                 119       4   79
+2                                                                1108       5  130
+3                                                                 132       0   66
+4                                                                1386      58 1572
+5                                                                 396      19  325
+6                                                                1016       1  152
+  share Total.Interactions
+1    17                100
+2    29                164
+3    14                 80
+4   147               1777
+5    49                393
+6    33                186
+> 
+> #create subset
+> subset<-df[c("Page.total.likes","Type","Category","comment","like","share")]      
+> head(subset)
+  Page.total.likes   Type Category comment like share
+1           139441  Photo        2       4   79    17
+2           139441 Status        2       5  130    29
+3           139441  Photo        3       0   66    14
+4           139441  Photo        2      58 1572   147
+5           139441  Photo        2      19  325    49
+6           139441 Status        2       1  152    33
+> 
+> #create subset
+> subset1<-df[c("Page.total.likes","Type","Post.Month","Post.Weekday","Post.Hour","like","comment","share")]
+> head(subset1)
+  Page.total.likes   Type Post.Month Post.Weekday Post.Hour like comment share
+1           139441  Photo         12            4         3   79       4    17
+2           139441 Status         12            3        10  130       5    29
+3           139441  Photo         12            3         3   66       0    14
+4           139441  Photo         12            2        10 1572      58   147
+5           139441  Photo         12            2         3  325      19    49
+6           139441 Status         12            1         9  152       1    33
+> 
+> #create subset
+> subset2<-subset(subset1,subset1$Type=="Photo" ,select=c(Page.total.likes,Post.Weekday,like,comment,share)) 
+> head(subset2)
+  Page.total.likes Post.Weekday like comment share
+1           139441            4   79       4    17
+3           139441            3   66       0    14
+4           139441            2 1572      58   147
+5           139441            2  325      19    49
+7           139441            1  249       3    27
+8           139441            7  325       0    14
+> 
+> #merging of subsets
+> merged<-merge(subset,subset2,by="Page.total.likes")      
+> head(head(merged))
+  Page.total.likes  Type Category comment.x like.x share.x Post.Weekday like.y
+1            81370 Photo        2         0     53      22            5     53
+2            81370 Photo        2         0     53      22            5     93
+3            81370 Photo        2         0     53      22            4     91
+4            81370 Photo        2         0     53      22            4     91
+5            81370 Photo        1         4     93      18            5     53
+6            81370 Photo        1         4     93      18            5     93
+  comment.y share.y
+1         0      22
+2         4      18
+3         7      38
+4         0      28
+5         0      22
+6         4      18
+> 
+> #sorting of data
+> sortdf<-df[order(df$Page.total.likes),]        
+> head(sortdf)
+    Page.total.likes  Type Category Post.Month Post.Weekday Post.Hour Paid
+497            81370 Photo        2          1            5         8    0
+498            81370 Photo        1          1            5         2    0
+499            81370 Photo        3          1            4        11    0
+500            81370 Photo        2          1            4         4   NA
+494            85093 Photo        3          1            1         2    0
+495            85093 Photo        3          1            7        10    0
+    Lifetime.Post.Total.Reach Lifetime.Post.Total.Impressions Lifetime.Engaged.Users
+497                      3480                            6229                    537
+498                      3778                            7216                    625
+499                      4156                            7564                    626
+500                      4188                            7292                    564
+494                      8412                           13960                   1179
+495                      5400                            9218                    810
+    Lifetime.Post.Consumers Lifetime.Post.Consumptions
+497                     508                        687
+498                     572                        795
+499                     574                        832
+500                     524                        743
+494                    1111                       1632
+495                     756                       1003
+    Lifetime.Post.Impressions.by.people.who.have.liked.your.Page
+497                                                         3961
+498                                                         4742
+499                                                         4534
+500                                                         3861
+494                                                         8632
+495                                                         5654
+    Lifetime.Post.reach.by.people.who.like.your.Page
+497                                             2104
+498                                             2388
+499                                             2452
+500                                             2200
+494                                             5348
+495                                             3230
+    Lifetime.People.who.have.liked.your.Page.and.engaged.with.your.post comment like
+497                                                                 301       0   53
+498                                                                 363       4   93
+499                                                                 370       7   91
+500                                                                 316       0   91
+494                                                                 699      17  185
+495                                                                 422      10  125
+    share Total.Interactions
+497    22                 75
+498    18                115
+499    38                136
+500    28                119
+494    55                257
+495    41                176
+> 
+> #transpose
+> transposedf = t(df)       
+> View(transposedf)
+> 
+> #Melt
+> meltData<-melt(data=df,id.vars="Lifetime.Engaged.Users",measure.vars=c("Total.Interactions"))
+> head(meltData)
+  Lifetime.Engaged.Users           variable value
+1                    178 Total.Interactions   100
+2                   1457 Total.Interactions   164
+3                    177 Total.Interactions    80
+4                   2211 Total.Interactions  1777
+5                    671 Total.Interactions   393
+6                   1191 Total.Interactions   186
+> 
+> #cast
+> castData<-acast(data=meltData,Lifetime.Engaged.Users~variable,mean) 
+> head(castData)
+   Total.Interactions
+9                   0
+15                  0
+17                  0
+24                  6
+25                  0
+37                  0

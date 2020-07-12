@@ -1,0 +1,40 @@
+***********************************************************7th ASSIGNMENT**************************************************************
+
+mysql> select * from select1 where p_id in (select p_id from product where cat_id not in (select cat_id from category where cat_name="Mobiles" or cat_name="Laptops"));
++------+------+------+--------+
+| o_id | p_id | qty  | total  |
++------+------+------+--------+
+|  502 |   12 |    3 | 141000 |
+|  504 |   14 |    2 |  70000 |
+|  505 |   15 |    4 | 264000 |
++------+------+------+--------+
+3 rows in set (0.01 sec)
+
+mysql> select product.p_id,p_name,qty from product,select1 where product.p_id=select1.p_id and qty in ('2','5');
++------+-----------+------+
+| p_id | p_name    | qty  |
++------+-----------+------+
+|   11 | IPhone X  |    2 |
+|   13 | HP        |    5 |
+|   14 | LG LCD TV |    2 |
++------+-----------+------+
+3 rows in set (0.00 sec)
+
+mysql> select * from product where unit_price > (select unit_price from product where p_name="Samsung LED TV");
++------+--------+----------+------------+-----------+
+| p_id | cat_id | p_name   | unit_price | ava_stock |
++------+--------+----------+------------+-----------+
+|   11 |   1001 | IPhone X |      92000 |         4 |
+|   13 |   1002 | HP       |      49500 |         7 |
+|   15 |   1005 | DELL     |      66000 |         9 |
++------+--------+----------+------------+-----------+
+3 rows in set (0.00 sec)
+
+mysql> select * from order1 where total_amt=(select max(total_amt) from order1);
++------+------+------------+-----------+
+| o_id | c_id | o_date     | total_amt |
++------+------+------------+-----------+
+|  505 |  101 | 2019-07-13 |    432000 |
++------+------+------------+-----------+
+1 row in set (0.00 sec)
+

@@ -1,0 +1,444 @@
+
+*************************************ASSIGNMENT 8**********************************
+
+
+---------------------------Trigger written in the file :- --------------------------
+
+delimiter //
+
+CREATE TRIGGER upper_name
+
+BEFORE INSERT ON customer
+
+FOR EACH ROW
+
+BEGIN
+
+	set NEW.c_name=UPPER(NEW.c_name);
+END;
+
+//
+
+------------------------------------------------------------------------------------
+
+
+mysql> source qty_error.sql
+Query OK, 0 rows affected (0.08 sec)
+
+mysql> select * from select1;
+    -> //
++------+------+------+--------+
+| o_id | p_id | qty  | total  |
++------+------+------+--------+
+|  501 |   11 |    2 | 184000 |
+|  502 |   12 |    3 | 141000 |
+|  503 |   13 |    5 | 247500 |
+|  504 |   14 |    2 |  70000 |
+|  505 |   15 |    4 | 264000 |
+|  505 |   16 |    4 | 168000 |
++------+------+------+--------+
+6 rows in set (0.00 sec)
+
+mysql> insert into select1 values(504,15,-2,827300);
+    -> //
+ERROR 1644 (70000): Quantity cannot be less than zero!
+
+---------------------------Trigger written in the file :- --------------------------
+
+delimiter //
+
+CREATE TRIGGER qty_error
+
+BEFORE INSERT ON select1
+
+FOR EACH ROW
+
+BEGIN
+
+	IF ( NEW.qty < 0 ) THEN
+
+		SIGNAL SQLSTATE '70000'
+		SET MESSAGE_TEXT = 'Quantity cannot be less than zero!';
+		
+	END IF;
+
+END;
+
+//
+
+------------------------------------------------------------------------------------
+
+mysql> source stock_modify.sql
+Query OK, 0 rows affected (0.08 sec)
+
+mysql> insert into product values(14,1001,"One Plus",34000,10);
+    -> //
+ERROR 1062 (23000): Duplicate entry '14' for key 'PRIMARY'
+mysql> insert into product values(17,1001,"One Plus",34000,10);
+    -> //
+Query OK, 1 row affected (0.04 sec)
+
+mysql> select * from product;
+    -> //
++------+--------+----------------+------------+-----------+
+| p_id | cat_id | p_name         | unit_price | ava_stock |
++------+--------+----------------+------------+-----------+
+|   11 |   1001 | IPhone X       |      92000 |         4 |
+|   12 |   1004 | Samsung LED TV |      47000 |        10 |
+|   13 |   1002 | HP             |      49500 |         7 |
+|   14 |   1003 | LG LCD TV      |      35000 |        14 |
+|   15 |   1005 | DELL           |      66000 |         9 |
+|   16 |   1002 | ACER           |      42000 |         3 |
+|   17 |   1001 | One Plus       |      34000 |        10 |
++------+--------+----------------+------------+-----------+
+7 rows in set (0.00 sec)
+
+mysql> insert into select1 values(505,17,4,136000);
+    -> //
+Query OK, 1 row affected (0.06 sec)
+
+mysql> select * from select1;
+    -> //
++------+------+------+--------+
+| o_id | p_id | qty  | total  |
++------+------+------+--------+
+|  501 |   11 |    2 | 184000 |
+|  502 |   12 |    3 | 141000 |
+|  503 |   13 |    5 | 247500 |
+|  504 |   14 |    2 |  70000 |
+|  505 |   15 |    4 | 264000 |
+|  505 |   16 |    4 | 168000 |
+|  505 |   17 |    4 | 136000 |
++------+------+------+--------+
+7 rows in set (0.00 sec)
+
+mysql> select * from product;
+    -> //
++------+--------+----------------+------------+-----------+
+| p_id | cat_id | p_name         | unit_price | ava_stock |
++------+--------+----------------+------------+-----------+
+|   11 |   1001 | IPhone X       |      92000 |         4 |
+|   12 |   1004 | Samsung LED TV |      47000 |        10 |
+|   13 |   1002 | HP             |      49500 |         7 |
+|   14 |   1003 | LG LCD TV      |      35000 |        14 |
+|   15 |   1005 | DELL           |      66000 |         9 |
+|   16 |   1002 | ACER           |      42000 |         3 |
+|   17 |   1001 | One Plus       |      34000 |         6 |
++------+--------+----------------+------------+-----------+
+7 rows in set (0.00 sec)
+
+---------------------------Trigger written in the file :- --------------------------
+
+delimiter //
+
+CREATE TRIGGER stock_modify
+
+BEFORE INSERT ON select1
+
+FOR EACH ROW
+
+BEGIN 
+
+	update product set product.ava_stock=product.ava_stock-NEW.qty where product.p_id=NEW.p_id;
+END;
+
+//
+
+------------------------------------------------------------------------------------
+
+mysql> source total_select1.sql
+Query OK, 0 rows affected (0.08 sec)
+
+mysql> insert into select1 values(503,11,2,0);//
+Query OK, 1 row affected (0.05 sec)
+
+mysql> select * from select1;
+    -> //
++------+------+------+--------+
+| o_id | p_id | qty  | total  |
++------+------+------+--------+
+|  501 |   11 |    2 | 184000 |
+|  502 |   12 |    3 | 141000 |
+|  503 |   13 |    5 | 247500 |
+|  504 |   14 |    2 |  70000 |
+|  505 |   15 |    4 | 264000 |
+|  505 |   16 |    4 | 168000 |
+|  505 |   17 |    4 | 136000 |
+|  503 |   11 |    2 | 184000 |
+|  503 |   11 |    2 | 184000 |
++------+------+------+--------+
+9 rows in set (0.00 sec)
+
+---------------------------Trigger written in the file :- --------------------------
+
+delimiter //
+
+CREATE TRIGGER total_select1 
+
+BEFORE INSERT ON select1
+
+FOR EACH ROW
+
+BEGIN
+
+	set NEW.total = (select unit_price from product where NEW.p_id=p_id) * NEW.qty ;
+
+END;
+
+//
+
+------------------------------------------------------------------------------------
+
+mysql> source total_amt_order1.sql
+Query OK, 0 rows affected (0.09 sec)
+
+mysql> insert into select1 values(502,13,3,0);
+    -> //
+Query OK, 1 row affected (0.05 sec)
+
+
+mysql> select * from select1;
+    -> //
++------+------+------+--------+
+| o_id | p_id | qty  | total  |
++------+------+------+--------+
+|  501 |   11 |    2 | 184000 |
+|  502 |   12 |    3 | 141000 |
+|  503 |   13 |    5 | 247500 |
+|  504 |   14 |    2 |  70000 |
+|  505 |   15 |    4 | 264000 |
+|  505 |   16 |    4 | 168000 |
+|  505 |   17 |    4 | 136000 |
+|  503 |   11 |    2 | 184000 |
+|  503 |   11 |    2 | 184000 |
+|  502 |   13 |    3 | 148500 |
++------+------+------+--------+
+10 rows in set (0.00 sec)
+
+mysql> select * from order1;
+    -> //
++------+------+------------+-----------+
+| o_id | c_id | o_date     | total_amt |
++------+------+------------+-----------+
+|  501 |  101 | 2019-07-19 |    184000 |
+|  502 |  104 | 2019-07-15 |    289500 |
+|  503 |  102 | 2019-07-16 |    247500 |
+|  504 |  103 | 2019-07-14 |     70000 |
+|  505 |  101 | 2019-07-13 |    432000 |
++------+------+------------+-----------+
+5 rows in set (0.00 sec)
+
+---------------------------Trigger written in the file :- --------------------------
+
+delimiter //
+
+CREATE TRIGGER total_amt_order1
+
+AFTER INSERT ON select1
+
+FOR EACH ROW
+
+BEGIN
+
+	update order1 set order1.total_amt = order1.total_amt + NEW.total where NEW.o_id = order1.o_id ;
+
+END;
+
+//
+
+------------------------------------------------------------------------------------
+
+mysql> source stock_less.sql
+Query OK, 0 rows affected (0.08 sec)
+
+mysql> insert into select1 values(503,13,5,0);
+    -> //
+ERROR 1644 (70000): Required quantity not available!
+
+---------------------------Trigger written in the file :- --------------------------
+
+delimiter //
+
+CREATE TRIGGER stock_less
+
+BEFORE INSERT ON select1
+
+FOR EACH ROW
+
+BEGIN
+
+	IF ( NEW.qty > (select ava_stock from product where NEW.p_id=p_id)) THEN
+
+		SIGNAL SQLSTATE '70000'
+		SET MESSAGE_TEXT = 'Required quantity not available!';
+		
+	END IF;
+
+END;
+
+//
+
+------------------------------------------------------------------------------------
+
+mysql> source trans_log.sql
+Query OK, 0 rows affected (0.10 sec)
+
+mysql> select * from product;
+    -> //
++------+--------+----------------+------------+-----------+
+| p_id | cat_id | p_name         | unit_price | ava_stock |
++------+--------+----------------+------------+-----------+
+|   11 |   1001 | IPhone X       |      92000 |        -2 |
+|   12 |   1004 | Samsung LED TV |      47000 |        10 |
+|   13 |   1002 | HP             |      49500 |         4 |
+|   14 |   1003 | LG LCD TV      |      35000 |        14 |
+|   15 |   1005 | DELL           |      66000 |         9 |
+|   16 |   1002 | ACER           |      42000 |         3 |
+|   17 |   1001 | One Plus       |      34000 |         6 |
++------+--------+----------------+------------+-----------+
+7 rows in set (0.00 sec)
+
+mysql> update product set unit_price = 48000 where p_id=12;
+    -> //
+Query OK, 1 row affected (0.06 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+
+---------------------------Trigger written in the file :- --------------------------
+
+delimiter //
+
+CREATE TRIGGER transactn_log 
+
+BEFORE UPDATE ON product
+
+FOR EACH ROW
+
+BEGIN
+	
+	insert into trans_log values(NEW.p_id,current_date,user(),OLD.unit_price,NEW.unit_price);
+	
+END;
+
+//
+	
+------------------------------------------------------------------------------------
+
+mysql> source delete_log_table.sql
+Query OK, 0 rows affected (0.08 sec)
+
+mysql> insert into order1 values(504,103,'2019-07-14',75000);
+    -> //
+Query OK, 1 row affected (0.03 sec)
+
+mysql> select * from order1;
+    -> //
++------+------+------------+-----------+
+| o_id | c_id | o_date     | total_amt |
++------+------+------------+-----------+
+|  501 |  101 | 2019-07-19 |    184000 |
+|  502 |  104 | 2019-07-15 |    289500 |
+|  503 |  102 | 2019-07-16 |    247500 |
+|  504 |  103 | 2019-07-14 |     75000 |
+|  505 |  101 | 2019-07-13 |    432000 |
++------+------+------------+-----------+
+5 rows in set (0.00 sec)
+
+mysql> delete from order1 where o_id=504;
+    -> //
+Query OK, 1 row affected (0.03 sec)
+
+
+---------------------------Trigger written in the file :- --------------------------
+
+delimiter //
+
+CREATE TRIGGER delete_log_table
+
+BEFORE DELETE ON order1
+
+FOR EACH ROW
+
+BEGIN
+	
+	insert into delete_log values(current_date,user(),OLD.o_id,OLD.total_amt);
+	
+END;
+
+//
+	
+------------------------------------------------------------------------------------
+
+mysql> select * from order1;
+    -> //
++------+------+------------+-----------+
+| o_id | c_id | o_date     | total_amt |
++------+------+------------+-----------+
+|  501 |  101 | 2019-07-19 |    184000 |
+|  502 |  104 | 2019-07-15 |    289500 |
+|  503 |  102 | 2019-07-16 |    247500 |
+|  505 |  101 | 2019-07-13 |    432000 |
++------+------+------------+-----------+
+4 rows in set (0.00 sec)
+
+mysql> select * from select1;
+    -> //
++------+------+------+--------+
+| o_id | p_id | qty  | total  |
++------+------+------+--------+
+|  501 |   11 |    2 | 184000 |
+|  502 |   12 |    3 | 141000 |
+|  503 |   13 |    5 | 247500 |
+|  505 |   15 |    4 | 264000 |
+|  505 |   16 |    4 | 168000 |
+|  505 |   17 |    4 | 136000 |
+|  503 |   11 |    2 | 184000 |
+|  503 |   11 |    2 | 184000 |
++------+------+------+--------+
+8 rows in set (0.00 sec)
+
+mysql> source delete1.sql
+ERROR 1363 (HY000): There is no NEW row in on DELETE trigger
+mysql> source delete1.sql
+Query OK, 0 rows affected (0.08 sec)
+
+mysql> delete from order1 where o_id=502;
+    -> //
+Query OK, 1 row affected (0.13 sec)
+
+mysql> select * from select1;
+    -> //
++------+------+------+--------+
+| o_id | p_id | qty  | total  |
++------+------+------+--------+
+|  501 |   11 |    2 | 184000 |
+|  503 |   13 |    5 | 247500 |
+|  505 |   15 |    4 | 264000 |
+|  505 |   16 |    4 | 168000 |
+|  505 |   17 |    4 | 136000 |
+|  503 |   11 |    2 | 184000 |
+|  503 |   11 |    2 | 184000 |
++------+------+------+--------+
+7 rows in set (0.00 sec)
+
+---------------------------Trigger written in the file :- --------------------------
+
+delimiter //
+
+CREATE TRIGGER delete1
+
+BEFORE DELETE ON order1
+
+FOR EACH ROW
+
+BEGIN
+	
+	delete from select1 where select1.o_id=(OLD.o_id);
+	
+END;
+
+//
+	
+------------------------------------------------------------------------------------
+
+

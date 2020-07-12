@@ -1,0 +1,239 @@
+########################################################################################
+
+Author - Omkar Deshpande (K10 - 33213)
+
+Problem Statement - Write an application using HBase and HiveQL for flight information system which will include 
+    1) Creating, Dropping, and altering Database tables 
+    2) Creating an external Hive table to connect to the HBase for Customer Information Table 
+    3) Load table with data, insert new values and field in the table, Join tables with Hive 
+    4) Create index on Flight information Table
+    5) Find the average departure delay per day in 2008. 
+
+Part 2 - flight Database with hbase and hive and finding average departure delay
+########################################################################################
+
+hduser@DBMSLAB-A3-305-09:~$ hbase shell
+2020-02-04 13:27:15,723 WARN  [main] util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+SLF4J: Class path contains multiple SLF4J bindings.
+SLF4J: Found binding in [jar:file:/usr/local/hbase/lib/slf4j-log4j12-1.7.5.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: Found binding in [jar:file:/usr/local/hadoop/share/hadoop/common/lib/slf4j-log4j12-1.7.10.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: See http://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J: Actual binding is of type [org.slf4j.impl.Log4jLoggerFactory]
+HBase Shell; enter 'help<RETURN>' for list of supported commands.
+Type "exit<RETURN>" to leave the HBase Shell
+Version 1.2.6, rUnknown, Mon May 29 02:25:32 CDT 2017
+
+#################### Creating Database ####################
+
+hbase(main):024:0> create 'flight_data','details','departure'
+0 row(s) in 2.3310 seconds
+
+=> Hbase::Table - flight_data
+hbase(main):025:0> put 'flight_data',1,'details:from','pune'
+0 row(s) in 0.0080 seconds
+
+hbase(main):026:0> put 'flight_data',1,'details:to','mumbai'
+0 row(s) in 0.0040 seconds
+
+hbase(main):027:0> put 'flight_data',1,'departure:at',10.00
+0 row(s) in 0.0050 seconds
+
+hbase(main):028:0> put 'flight_data',1,'departure:delay',1
+0 row(s) in 0.0060 seconds
+
+hbase(main):029:0> put 'flight_data',1,'details:date','2019-02-04'
+0 row(s) in 0.0140 seconds
+
+hbase(main):030:0> scan 'flight_data'
+ROW                                         COLUMN+CELL                                                                                                                  
+ 1                                          column=departure:at, timestamp=1580805608592, value=10.0                                                                     
+ 1                                          column=departure:delay, timestamp=1580805620222, value=1                                                                     
+ 1                                          column=details:date, timestamp=1580805835629, value=2019-02-04                                                               
+ 1                                          column=details:from, timestamp=1580805567810, value=pune                                                                     
+ 1                                          column=details:to, timestamp=1580805576615, value=mumbai                                                                     
+1 row(s) in 0.0050 seconds
+
+hbase(main):031:0> list
+TABLE                                                                                                                                                                    
+EmpHive                                                                                                                                                                  
+Rflight                                                                                                                                                                  
+Student_table                                                                                                                                                            
+custhive                                                                                                                                                                 
+emp_hive                                                                                                                                                                 
+emphive                                                                                                                                                                  
+emphive33130                                                                                                                                                             
+flight                                                                                                                                                                   
+flight33130                                                                                                                                                              
+flight_data                                                                                                                                                              
+flightbooking                                                                                                                                                            
+lone                                                                                                                                                                     
+sts                                                                                                                                                                      
+student                                                                                                                                                                  
+student_info                                                                                                                                                             
+15 row(s) in 0.0170 seconds
+
+=> ["EmpHive", "Rflight", "Student_table", "custhive", "emp_hive", "emphive", "emphive33130", "flight", "flight33130", "flight_data", "flightbooking", "lone", "sts", "student", "student_info"]
+
+hbase(main):034:0> scan 'flight_data'
+ROW                                         COLUMN+CELL                                                                                                                  
+ 1                                          column=departure:at, timestamp=1580805608592, value=10.0                                                                     
+ 1                                          column=departure:delay, timestamp=1580805620222, value=1                                                                     
+ 1                                          column=details:date, timestamp=1580805835629, value=2019-02-04                                                               
+ 1                                          column=details:from, timestamp=1580805567810, value=pune                                                                     
+ 1                                          column=details:to, timestamp=1580805576615, value=mumbai                                                                     
+1 row(s) in 0.0170 seconds
+
+hbase(main):035:0> scan 'flight_data'
+ROW                   COLUMN+CELL                                               
+ 1                    column=departure:at, timestamp=1580805608592, value=10.0  
+ 1                    column=departure:delay, timestamp=1580805620222, value=1  
+ 1                    column=details:date, timestamp=1580805835629, value=2019-0
+                      2-04                                                      
+ 1                    column=details:from, timestamp=1580805567810, value=pune  
+ 1                    column=details:to, timestamp=1580805576615, value=mumbai  
+1 row(s) in 0.0250 seconds
+
+#################### Inserting values ####################
+
+hbase(main):036:0> put 'flight_data',2,'details:from','mumbai'
+0 row(s) in 0.0030 seconds
+
+hbase(main):037:0> put 'flight_data',2,'details:to','pune'
+0 row(s) in 0.0040 seconds
+
+hbase(main):038:0> put 'flight_data',2,'details:date','2008-25-03'
+0 row(s) in 0.0030 seconds
+
+hbase(main):039:0> put 'flight_data',2,'departure:at',20.00
+0 row(s) in 0.0030 seconds
+
+hbase(main):040:0> put 'flight_data',2,'departure:delay',2
+0 row(s) in 0.0050 seconds
+
+hbase(main):041:0> put 'flight_data',3,'details:from','chennai'
+0 row(s) in 0.0040 seconds
+
+hbase(main):042:0> put 'flight_data',3,'details:to','sangamner'
+0 row(s) in 0.0050 seconds
+
+hbase(main):043:0> put 'flight_data',3,'details:date','2008-05-08'
+0 row(s) in 0.0020 seconds
+
+hbase(main):044:0> put 'flight_data',3,'departure:at',16.30
+0 row(s) in 0.0050 seconds
+
+hbase(main):045:0> put 'flight_data',3,'departure:delay',7
+0 row(s) in 0.0050 seconds
+
+hbase(main):046:0> put 'flight_data',2,'details:date','2007-06-12'
+0 row(s) in 0.0040 seconds
+
+hbase(main):047:0> hduser@DBMSLAB-A3-305-09:~$ 
+
+
+######################## HIve Section #################
+
+hive> CREATE external TABLE hbase_flight(id int,date1 timestamp , from_city string, to_city string, at float,delay int)
+    > STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'
+    > WITH SERDEPROPERTIES ("hbase.columns.mapping" = ":key,details:date,details:from,details:to,departure:at,departure:delay")
+    > TBLPROPERTIES ("hbase.table.name" = "flight_data");
+OK
+Time taken: 0.122 seconds
+hive> select * from hbase_flight;
+OK
+1	NULL	pune	mumbai	10.0	1
+Time taken: 0.157 seconds, Fetched: 1 row(s)
+hive> CREATE external TABLE hbase_flight1(id int,date1 date , from_city string, to_city string, at float,delay int)
+    > STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'
+    > WITH SERDEPROPERTIES ("hbase.columns.mapping" = ":key,details:date,details:from,details:to,departure:at,departure:delay")
+    > TBLPROPERTIES ("hbase.table.name" = "flight_data");
+OK
+Time taken: 0.109 seconds
+hive> select * from hbase_flight1;
+OK
+1	2019-02-04	pune	mumbai	10.0	1
+Time taken: 0.138 seconds, Fetched: 1 row(s)
+hive> select * from hbase_flight1;
+OK
+1	2019-02-04	pune	mumbai	10.0	1
+2	NULL	mumbai	pune	20.0	2
+3	2008-05-08	chennai	sangamner	16.3	7
+Time taken: 0.133 seconds, Fetched: 3 row(s)
+hive> select * from hbase_flight1;
+OK
+1	2019-02-04	pune	mumbai	10.0	1
+2	2007-06-12	mumbai	pune	20.0	2
+3	2008-05-08	chennai	sangamner	16.3	7
+Time taken: 0.132 seconds, Fetched: 3 row(s)
+hive> describe hbase_flight1;
+OK
+id                  	int                 	                    
+date1               	date                	                    
+from_city           	string              	                    
+to_city             	string              	                    
+at                  	float               	                    
+delay               	int                 	                    
+Time taken: 0.023 seconds, Fetched: 6 row(s)
+
+####################### Getting average Departure Delay #######################
+
+hive> select avg(delay) from hbase_flight1 where year(date1) = '2008';
+WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
+Query ID = hduser_20200204143554_ef68a83c-4792-4158-8317-b6420997a26d
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1580801769897_0003, Tracking URL = http://localhost:8088/proxy/application_1580801769897_0003/
+Kill Command = /usr/local/hadoop/bin/hadoop job  -kill job_1580801769897_0003
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1
+2020-02-04 14:36:08,414 Stage-1 map = 0%,  reduce = 0%
+2020-02-04 14:36:12,624 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 2.41 sec
+2020-02-04 14:36:16,759 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 3.59 sec
+MapReduce Total cumulative CPU time: 3 seconds 590 msec
+Ended Job = job_1580801769897_0003
+MapReduce Jobs Launched: 
+Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 3.59 sec   HDFS Read: 11336 HDFS Write: 103 SUCCESS
+Total MapReduce CPU Time Spent: 3 seconds 590 msec
+OK
+7.0
+Time taken: 24.042 seconds, Fetched: 1 row(s)
+
+
+
+
+hive> select year(date1),avg(delay) from hbase_flight1 group by year(date1);
+WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
+Query ID = hduser_20200204143725_e2b43870-e616-4bd0-9dde-ea042b4aa840
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks not specified. Estimated from input data size: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1580801769897_0004, Tracking URL = http://localhost:8088/proxy/application_1580801769897_0004/
+Kill Command = /usr/local/hadoop/bin/hadoop job  -kill job_1580801769897_0004
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1
+2020-02-04 14:37:36,552 Stage-1 map = 0%,  reduce = 0%
+2020-02-04 14:37:41,690 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 2.2 sec
+2020-02-04 14:37:45,802 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 3.32 sec
+MapReduce Total cumulative CPU time: 3 seconds 320 msec
+Ended Job = job_1580801769897_0004
+MapReduce Jobs Launched: 
+Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 3.32 sec   HDFS Read: 10862 HDFS Write: 150 SUCCESS
+Total MapReduce CPU Time Spent: 3 seconds 320 msec
+OK
+2007	2.0
+2008	7.0
+2019	1.0
+Time taken: 21.252 seconds, Fetched: 3 row(s)
+hive> 
+

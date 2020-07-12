@@ -1,0 +1,218 @@
+mllab-02@mllab02:~$ sudo mysql -u Piyush -root
+[sudo] password for mllab-02: 
+Sorry, try again.
+[sudo] password for mllab-02: 
+Sorry, try again.
+[sudo] password for mllab-02: 
+ERROR 1045 (28000): Access denied for user 'Piyush'@'localhost' (using password: NO)
+mllab-02@mllab02:~$ sudo mysql -u Piyush -root
+ERROR 1045 (28000): Access denied for user 'Piyush'@'localhost' (using password: NO)
+mllab-02@mllab02:~$ sudo mysql -u Piyush -p
+Enter password: 
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 8
+Server version: 5.7.26-0ubuntu0.18.04.1 (Ubuntu)
+
+Copyright (c) 2000, 2019, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> create database stationary;
+ERROR 1007 (HY000): Can't create database 'stationary'; database exists
+mysql> use stationary;
+Database changed
+mysql> create table customer(customerid bigint primary key auto_increment,customername varchar(20));
+Query OK, 0 rows affected (0.35 sec)
+
+mysql> insert into customer(customerid,customername)values(Piyush);
+ERROR 1136 (21S01): Column count doesn't match value count at row 1
+mysql> insert into customer(customername)values(Piyush);
+ERROR 1054 (42S22): Unknown column 'Piyush' in 'field list'
+mysql> insert into customer(customername)values('Piyush');
+Query OK, 1 row affected (0.04 sec)
+
+mysql> insert into customer(customername)values(Ankit);
+ERROR 1054 (42S22): Unknown column 'Ankit' in 'field list'
+mysql> insert into customer(customername)values('Ankit');
+Query OK, 1 row affected (0.04 sec)
+
+mysql> insert into customer(customername)values('Darshan');
+Query OK, 1 row affected (0.02 sec)
+
+mysql> insert into customer(customername)values('Ashwin');
+Query OK, 1 row affected (0.04 sec)
+
+mysql> desc customer;
++--------------+-------------+------+-----+---------+----------------+
+| Field        | Type        | Null | Key | Default | Extra          |
++--------------+-------------+------+-----+---------+----------------+
+| customerid   | bigint(20)  | NO   | PRI | NULL    | auto_increment |
+| customername | varchar(20) | YES  |     | NULL    |                |
++--------------+-------------+------+-----+---------+----------------+
+2 rows in set (0.00 sec)
+
+mysql> select * from customer;
++------------+--------------+
+| customerid | customername |
++------------+--------------+
+|          1 | Piyush       |
+|          2 | Ankit        |
+|          3 | Darshan      |
+|          4 | Ashwin       |
++------------+--------------+
+4 rows in set (0.00 sec)
+
+mysql> create table category(category_name varchar(20),categoryid bigint primary key autoincrement);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'autoincrement)' at line 1
+mysql> create table category(category_name varchar(20),categoryid bigint primary key auto_increment);
+Query OK, 0 rows affected (0.25 sec)
+
+mysql> create table product(product_id bigint primary key autoincrement,categoryid bigint);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'autoincrement,categoryid bigint)' at line 1
+mysql> create table product(product_id bigint primary key auto_increment,categoryid bigint);
+Query OK, 0 rows affected (0.25 sec)
+
+mysql> alter table product add column productname varchar(20);
+Query OK, 0 rows affected (0.44 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> desc product;
++-------------+-------------+------+-----+---------+----------------+
+| Field       | Type        | Null | Key | Default | Extra          |
++-------------+-------------+------+-----+---------+----------------+
+| product_id  | bigint(20)  | NO   | PRI | NULL    | auto_increment |
+| categoryid  | bigint(20)  | YES  |     | NULL    |                |
+| productname | varchar(20) | YES  |     | NULL    |                |
++-------------+-------------+------+-----+---------+----------------+
+3 rows in set (0.00 sec)
+
+mysql> alter table product add foreign key(categoryid) references category(category_id);
+ERROR 1215 (HY000): Cannot add foreign key constraint
+mysql> alter table product add foreign key(categoryid) references category(categoryid);
+Query OK, 0 rows affected (0.62 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> desc product;
++-------------+-------------+------+-----+---------+----------------+
+| Field       | Type        | Null | Key | Default | Extra          |
++-------------+-------------+------+-----+---------+----------------+
+| product_id  | bigint(20)  | NO   | PRI | NULL    | auto_increment |
+| categoryid  | bigint(20)  | YES  | MUL | NULL    |                |
+| productname | varchar(20) | YES  |     | NULL    |                |
++-------------+-------------+------+-----+---------+----------------+
+3 rows in set (0.00 sec)
+
+mysql> insert into category(category_name)values(Pen);
+ERROR 1054 (42S22): Unknown column 'Pen' in 'field list'
+mysql> insert into category(category_name)values('Pen');
+Query OK, 1 row affected (0.03 sec)
+
+mysql> desc category;
++---------------+-------------+------+-----+---------+----------------+
+| Field         | Type        | Null | Key | Default | Extra          |
++---------------+-------------+------+-----+---------+----------------+
+| category_name | varchar(20) | YES  |     | NULL    |                |
+| categoryid    | bigint(20)  | NO   | PRI | NULL    | auto_increment |
++---------------+-------------+------+-----+---------+----------------+
+2 rows in set (0.00 sec)
+
+mysql> select * from category;
++---------------+------------+
+| category_name | categoryid |
++---------------+------------+
+| Pen           |          1 |
++---------------+------------+
+1 row in set (0.01 sec)
+
+mysql> insert into product(categoryid,productname)values(1,'Cello Ball Pen');
+Query OK, 1 row affected (0.03 sec)
+
+mysql> insert into category(category_name)values('Books');
+Query OK, 1 row affected (0.03 sec)
+
+mysql> insert into product(categoryid,productname)values(2,'DBMS');
+Query OK, 1 row affected (0.03 sec)
+
+mysql> insert into category(category_name)values('NOtebooks');
+Query OK, 1 row affected (0.03 sec)
+
+mysql> insert into product(categoryid,productname)values(3,'Classmate Register');
+Query OK, 1 row affected (0.04 sec)
+
+mysql> insert into category(category_name)values('NOteb');
+Query OK, 1 row affected (0.03 sec)
+
+mysql> delete from category  where categoryid=4;
+Query OK, 1 row affected (0.04 sec)
+
+mysql> select * from category;
++---------------+------------+
+| category_name | categoryid |
++---------------+------------+
+| Pen           |          1 |
+| Books         |          2 |
+| NOtebooks     |          3 |
++---------------+------------+
+3 rows in set (0.00 sec)
+
+mysql> insert into category(category_name)values('Files');
+Query OK, 1 row affected (0.03 sec)
+
+mysql> insert into product(categoryid,productname)values(4,'FileFolder');
+ERROR 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`stationary`.`product`, CONSTRAINT `product_ibfk_1` FOREIGN KEY (`categoryid`) REFERENCES `category` (`categoryid`))
+mysql> insert into product(categoryid,productname)values(4,'FileFolder');
+ERROR 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`stationary`.`product`, CONSTRAINT `product_ibfk_1` FOREIGN KEY (`categoryid`) REFERENCES `category` (`categoryid`))
+mysql> insert into product(categoryid,productname)values(4,'FileFolder');
+ERROR 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`stationary`.`product`, CONSTRAINT `product_ibfk_1` FOREIGN KEY (`categoryid`) REFERENCES `category` (`categoryid`))
+mysql> select * from category;
++---------------+------------+
+| category_name | categoryid |
++---------------+------------+
+| Pen           |          1 |
+| Books         |          2 |
+| NOtebooks     |          3 |
+| Files         |          5 |
++---------------+------------+
+4 rows in set (0.00 sec)
+
+mysql> insert into category(category_name)values('Accessories');
+Query OK, 1 row affected (0.03 sec)
+
+mysql> insert into product(categoryid,productname)values(6,'Eraser');
+Query OK, 1 row affected (0.03 sec)
+
+mysql> insert into product(categoryid,productname)values(5,'FileFolder');
+Query OK, 1 row affected (0.03 sec)
+
+mysql> create table orders(customerid bigint,productid bigint,customername varchar(20),productname varchar(20));
+Query OK, 0 rows affected (0.24 sec)
+
+mysql> alter table orders add foreign key(customerid)references customer(customerid);
+Query OK, 0 rows affected (0.69 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> select * from product;
++------------+------------+--------------------+
+| product_id | categoryid | productname        |
++------------+------------+--------------------+
+|          1 |          1 | Cello Ball Pen     |
+|          2 |          2 | DBMS               |
+|          3 |          3 | Classmate Register |
+|          7 |          6 | Eraser             |
+|          8 |          5 | FileFolder         |
++------------+------------+--------------------+
+5 rows in set (0.00 sec)
+
+mysql> alter table orders add foreign key(productid)references product(product_id);
+Query OK, 0 rows affected (0.66 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> insert into orders(customerid,productid,customername,productname)values(1,2,'Piyush','DBMS');
+Query OK, 1 row affected (0.04 sec)
+
+mysql> 
+
