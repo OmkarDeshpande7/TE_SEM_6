@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Enrollment Form</title>
+
+</head>
+<style type="text/css">
+    input {
+        width: 45%;
+        margin-bottom: 20px;
+        margin-top: 7px;
+        background: transparent;
+        border: none;
+        color: white;
+        border-bottom: 2px solid lightgreen;
+    }
+    
+    input:hover {
+        transition: 0.2s;
+        border-bottom: 2px solid white;
+    }
+    
+    button {
+        width: 20%;
+        background-color: #ffb3b3;
+        color: black;
+        height: 30px;
+        border-radius: 10px;
+        border: none;
+    }
+    
+    input[type=submit] {
+        width: 20%;
+        background-color: #ffb3b3;
+        color: black;
+        height: 30px;
+        border-radius: 10px;
+        border: none;
+    }
+    
+    input[type=date]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    
+    input[type=submit]:hover {
+        background-color: green;
+        transition: .2s;
+    }
+    
+    input[type=radio] {
+        width: 5%;
+    }
+    
+    select {
+        width: 20%;
+        padding-left: 8%;
+    }
+    
+    label {
+        margin-top: 9px;
+        font-weight: bold;
+        font-size: 22px;
+        color: white;
+    }
+    
+     ::placeholder {
+        color: white;
+        opacity: 0.6;
+    }
+    
+    input:focus,
+    select:focus,
+    textarea:focus,
+    button:focus {
+        outline: none;
+    }
+</style>
+
+<body style="background-image: url(bg3.jpg);background-size: cover;">
+
+    <h1 style="color: white;font-size: 50px;" align="center">Enter Your Details !</h1>
+    <div style="margin-left: 25% ;width: 50%;">
+        <form action="login" method="post" >
+
+            <div style=" border: 2px solid white;padding: 20px">
+              
+                <label for="phone">Phone Number : </label><br>
+                <input maxlength="10" ondblclick="return newfunc(this);" autocomplete="off" placeholder="Enter Mobile number *" id="phone" type="tel" name="phone"><br>
+
+
+                <label for="password">Password : </label><br>
+                <input maxlength="15" ondblclick="return newfunc(this);" autocomplete="off" placeholder="Enter password *" type="password" id="password" name="password"><br>
+
+
+                <button type="submit" style="margin-top: 20px" id="btn2">SUBMIT</button>
+
+            </div>
+           
+
+    <script>
+
+
+        document.getElementById("email").onkeyup = function() {
+            var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+
+            if (reg.test(this.value) == false) {
+                this.style.borderBottom = "2px solid red";
+                //playAudio();
+                return false;
+            }
+            this.style.borderBottom = "2px solid lightgreen";
+
+            return true;
+        }
+
+        document.getElementById("phone").onkeyup = function() {
+            var reg = /^\d{10}$/;
+
+            if (reg.test(this.value) == false) {
+                this.style.borderBottom = "2px solid red";
+                //playAudio();
+                return false;
+            }
+            this.style.borderBottom = "2px solid lightgreen";
+            return true;
+        }
+
+        function newfunc(here) {
+            here.value = "";
+        }
+
+      
+
+        
+    </script>
+</body>
+
+
+
+</html>

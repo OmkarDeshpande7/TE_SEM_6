@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Enrollment Form</title>
+
+</head>
+<style type="text/css">
+    input {
+        width: 45%;
+        margin-bottom: 20px;
+        margin-top: 7px;
+        background: transparent;
+        border: none;
+        color: white;
+        border-bottom: 2px solid lightgreen;
+    }
+    
+    input:hover {
+        transition: 0.2s;
+        border-bottom: 2px solid white;
+    }
+    
+    button {
+        width: 20%;
+        background-color: #ffb3b3;
+        color: black;
+        height: 30px;
+        border-radius: 10px;
+        border: none;
+    }
+    
+    input[type=submit] {
+        width: 20%;
+        background-color: #ffb3b3;
+        color: black;
+        height: 30px;
+        border-radius: 10px;
+        border: none;
+    }
+    
+    input[type=date]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    
+    input[type=submit]:hover {
+        background-color: green;
+        transition: .2s;
+    }
+    
+    input[type=radio] {
+        width: 5%;
+    }
+    
+    select {
+        width: 20%;
+        padding-left: 8%;
+    }
+    
+    label {
+        margin-top: 9px;
+        font-weight: bold;
+        font-size: 22px;
+        color: white;
+    }
+    
+     ::placeholder {
+        color: white;
+        opacity: 0.6;
+    }
+    
+    input:focus,
+    select:focus,
+    textarea:focus,
+    button:focus {
+        outline: none;
+    }
+</style>
+
+<body style="background-image: url(bg3.jpg);background-size: cover;">
+
+    <h1 style="color: white;font-size: 50px;" align="center">Enter Your Details !</h1>
+    <div style="margin-left: 25% ;width: 50%;">
+        <form action="index.html" onsubmit="newform()">
+
+            <div style=" border: 2px solid white;padding: 20px">
+                <label for="email">Email : </label><br>
+                <input maxlength="20" ondblclick="return newfunc(this);" autocomplete="off" placeholder="Enter email *" onkeyup="validateEmail(this)" type="email" id="email" name="email"><br>
+
+                <label for="phone">Phone Number : </label><br>
+                <input maxlength="10" ondblclick="return newfunc(this);" autocomplete="off" placeholder="Enter Mobile number *" id="phone" type="tel" name="phone"><br>
+
+
+                <label for="password">Password : </label><br>
+                <input maxlength="15" ondblclick="return newfunc(this);" autocomplete="off" placeholder="Enter password *" type="password" id="password" name="password"><br>
+
+                <button type="button" id="btn1">RESET</button>
+            </div>
+
+            <div style="border: 2px solid white;padding: 20px;margin-top: 20px">
+                <div style="width: 50%; float: left">
+                    <label for="fname">First Name : </label><br>
+                    <input style="width: 95%" maxlength="20" ondblclick="return newfunc(this);" autocomplete="off" placeholder="Enter first name..." id="fname" type="text" name="fname"><br>
+                </div>
+                <div style="width:50%;float: right">
+                    <label for="lname">Last Name : </label><br>
+                    <input style="width: 95%" maxlength="20" ondblclick="return newfunc(this);" autocomplete="off" placeholder="Enter last name..." id="lname" type="text" name="lname"><br>
+                </div>
+                <br>
+                <label for="address"> Address : </label><br>
+                <input maxlength="30" ondblclick="return newfunc(this);" autocomplete="off" placeholder="Enter Full address..." id="address" type="text" name="address"><br>
+
+                <label for="Pincode">Pincode : </label><br>
+                <input maxlength="6" ondblclick="return newfunc(this);" autocomplete="off" placeholder="Enter Pincode..." pattern="^\d{6}" id="pincode" type="tel" name="Pincode"><br>
+
+                <label for="gender">Gender : </label><br>
+                <input ondblclick="return newfunc(this);" autocomplete="off" id="radio1" type="radio" name="gender" checked>male
+                <input ondblclick="return newfunc(this);" autocomplete="off" id="radio2" type="radio" name="gender">female<br>
+                <label for="dob">DOB : </label><br>
+                <input ondblclick="return newfunc(this);" autocomplete="off" id="dob" type="date" name="dob" checked>
+                <h3 style="color: white;">Please Enter Your Qualification : </h3>
+
+                <select ondblclick="return newfunc(this);" id="qualification">
+		<option>UG</option>
+		<option>PG</option>
+		<option>SSC</option>
+		<option>HSC</option>
+	</select><br>
+
+                <button type="button" style="margin-top: 20px" id="btn2">RESET</button>
+            </div>
+
+            <button class="prevbtn" style="margin-top: 20px;" id="submitbtn" type="submit" name="submit">Submit</button>
+            <button type="button" style="margin-top: 20px" id="btn3">Reset</button>
+
+        </form>
+    </div>
+
+
+    <audio id="player">
+		<source src="beep.wav" type="audio/wav">
+	</audio><br>
+
+
+
+
+   
+</body>
+
+
+
+</html>

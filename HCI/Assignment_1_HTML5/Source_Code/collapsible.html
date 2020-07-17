@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>collapsible</title>
+</head>
+<body>
+<div>
+	<ul>
+  <li>
+    <input type="checkbox" id="list-item-1">
+    <label for="list-item-1" class="first">title 1</label>
+    <ul>
+      <li>subtitle 1</li>
+      <li>subtitle 2</li>
+      <li>subtitle 3</li>
+      <li>subtitle 4</li>
+      <li>subtitle 5</li>
+    </ul>
+  </li>
+  <li>
+    <input type="checkbox" id="list-item-2">
+    <label for="list-item-2">title 2</label>
+    <ul>
+      <li>subtitle 1</li>
+      <li>subtitle 2</li>
+      <li>subtitle 3</li>
+      <li>subtitle 4</li>
+      <li>subtitle 5</li>
+    </ul>
+  </li>
+  <li>
+    <input type="checkbox" id="list-item-3">
+    <label for="list-item-3" class="last">title 3</label>
+    <ul>
+      <li>subtitle 1</li>
+      <li>subtitle 2</li>
+      <li>subtitle 3</li>
+      <li>subtitle 4</li>
+      <li>subtitle 5</li>
+    </ul>
+  </li>
+</ul>
+</div>
+</body>
+<style type="text/css">
+	ul{
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+label{
+  display: block;
+  cursor: pointer;
+  padding: 10px;
+  border: 1px solid #fff;
+  border-bottom: none;
+}
+
+label.last{
+  border-bottom: 1px solid #fff;
+}
+
+ul ul li{
+  padding-left: 100px;
+  padding-top: 10px;
+  background: lightgreen;
+}
+
+
+input[type="checkbox"]{
+  position: absolute;
+  left: -9999px;
+}
+
+input[type="checkbox"] ~ ul{
+  height: 0;
+  transform: scaleY(0);
+}
+
+input[type="checkbox"]:checked ~ ul{
+  height: 100%;
+  transform-origin: top;
+  transition: transform .2s ease-out;
+  transform: scaleY(1); 
+}
+
+
+</style>
+</html>

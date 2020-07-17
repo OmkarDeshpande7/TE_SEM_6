@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Introduction</title>
+<style type="text/css">
+	img:hover{
+		transition: 0.5s;
+		transform: rotate(360deg);
+	}
+	img{
+		transition: 2s;
+	}
+</style>
+</head>
+<body background="background.jpg" style="background-size: cover; background-position: right; background-repeat: no-repeat;" >
+
+	<h1 style="color:white; font-size: 4vw;font-family: cursive;"  align="center">Welcome To Learning Studio</h1><br>
+	<div>
+	<div style="float: left;width: 70%;">
+	<p style=" align-content: center;align-self:left;color:white; font-size: 2vw;padding-left: 30px;padding-top: 5vw;float: left; font-family: cursive;">Easy Learning provides universal access to the world’s best education, partnering with top universities and organizations to offer courses online.</p><br>
+		
+	</div>
+	<div style="float: right;align-content: left; width: 30%;">
+	<img  width="300"  height="300" src="logo.png"><br>
+	
+	<a href="courses.html" id="startBtn" >	<button onclick="playAudio()" style="margin-top: 30px ;font-size: 20px;font-weight: bolder; width: 300px ; height: 70px ;background-color: #42adf5;border-radius: 15px;"  >ENROLL COURSES</button></a>
+
+	</div>
+	</div>
+
+
+
+</body>
+<script type="text/javascript">
+	function playAudio(){
+		 document.getElementById("player").play();
+	}
+
+</script>
+</html>
